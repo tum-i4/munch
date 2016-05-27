@@ -103,7 +103,7 @@ $ cd ..
  
 9. Check the [Tutorials](http://klee.github.io/tutorials/) page to try KLEE.
 
- Testing with an easy example:
+ Testing a small function (Tutorial 1):
  
  ```
  $ cd $HOME/klee/examples/get_sign
@@ -126,7 +126,7 @@ $ cd ..
 
  ```
  export C_INCLUDE_PATH=/full/path/to/klee/include/:$C_INCLUDE_PATH
- export LD_LIBRARY_PATH=/full/path/to/klee/lib/:/usr/lib/x86_64-linux-gnu/:/full/path/to/stp/build/lib/:$LD_LIBRARY_PATH
+ export LD_LIBRARY_PATH=/full/path/to/klee/Release+Asserts/lib/:/usr/lib/x86_64-linux-gnu/:/full/path/to/stp/build/lib/:$LD_LIBRARY_PATH
  export LIBRARY_PATH=$LD_LIBRARY_PATH
  ```
  
