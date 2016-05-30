@@ -39,7 +39,7 @@ deb-src http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.4 main
  Make sure llvm-config is in your path:
  
   ```
-  $ sudo ln -sf /usr/bin/llvm-config-3.4 /usr/bin/llvm- config
+  $ sudo ln -sf /usr/bin/llvm-config-3.4 /usr/bin/llvm-config
   ```
    
  5. Build STP (Simple Theorem Prover):
