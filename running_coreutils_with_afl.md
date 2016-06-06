@@ -130,6 +130,35 @@ store its findings, plus a path to the binary to test.
  ─────────────────────────────────────────────────────┘             [cpu:323%]
 
  ```
+ 
+ After ~8h:
+ 
+ ```
+                          american fuzzy lop 2.13b (cat)
+
+ ┌─ process timing ─────────────────────────────────────┬─ overall results ─────┐
+ │        run time : 0 days, 8 hrs, 1 min, 7 sec        │  cycles done : 162    │
+ │   last new path : 0 days, 6 hrs, 25 min, 11 sec      │  total paths : 12     │
+ │ last uniq crash : none seen yet                      │ uniq crashes : 0      │
+ │  last uniq hang : 0 days, 7 hrs, 34 min, 19 sec      │   uniq hangs : 3      │
+ ├─ cycle progress ────────────────────┬─ map coverage ─┴───────────────────────┤
+ │  now processing : 9 (75.00%)        │    map density : 52 (0.08%)            │
+ │ paths timed out : 0 (0.00%)         │ count coverage : 2.35 bits/tuple       │
+ ├─ stage progress ────────────────────┼─ findings in depth ────────────────────┤
+ │  now trying : havoc                 │ favored paths : 2 (16.67%)             │
+ │ stage execs : 17.3k/30.0k (57.75%)  │  new edges on : 1 (8.33%)              │
+ │ total execs : 42.7M                 │ total crashes : 0 (0 unique)           │
+ │  exec speed : 1688/sec              │   total hangs : 614 (3 unique)         │
+ ├─ fuzzing strategy yields ───────────┴───────────────┬─ path geometry ────────┤
+ │   bit flips : 0/8.10M, 0/8.10M, 0/8.10M             │    levels : 10         │
+ │  byte flips : 0/1.01M, 0/195, 0/205                 │   pending : 0          │
+ │ arithmetics : 0/10.6k, 0/6467, 0/4384               │  pend fav : 0          │
+ │  known ints : 0/868, 0/4096, 0/7082                 │ own finds : 10         │
+ │  dictionary : 0/0, 0/0, 0/0                         │  imported : n/a        │
+ │       havoc : 9/7.00M, 1/10.3M                      │  variable : 0          │
+ │        trim : 30.99%/14.4k, 99.98%                  ├────────────────────────┘
+ ──────────────────────────────────────────────────────┘             [cpu:352%]
+ ```
   
  Try with **md5sum**
  
@@ -164,7 +193,7 @@ afl-fuzz 2.13b by <lcamtuf@google.com>
  [*] No -t option specified, so I'll use exec timeout of 20 ms. 
  ```
  
- After ~30 min
+ After ~30 min:
  
  ```
                         american fuzzy lop 2.13b (md5sum)
@@ -194,7 +223,7 @@ afl-fuzz 2.13b by <lcamtuf@google.com>
 
  ```
 
- After ~1h
+ After ~1h:
  
  ```
                        american fuzzy lop 2.13b (md5sum)
@@ -224,7 +253,7 @@ afl-fuzz 2.13b by <lcamtuf@google.com>
 
  ```
  
- After ~8h
+ After ~8h:
  
  ```
                         american fuzzy lop 2.13b (md5sum)
