@@ -6,7 +6,7 @@
 1. KLEE should be configured and built with uclibc and POSIX runtime support. You will also need to set the following enviromental variable:
 
  ```
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu
+ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu
  ```
 
 2. Build Coreutils with LLVM
@@ -65,7 +65,7 @@ libcoreutils.a: $(libcoreutils_a_OBJECTS) $(libcoreutils_a_DEPENDENCIES)
  obj-llvm$ make -C src arch hostname
  ```
  
- If all went well, you should now have in **src/** folder LLVM bitcode versions of Coreutils! Change also the permissions of all files in the folder in order to be able to run the executables.
+ If all went well, we should now have in **src/** folder LLVM bitcode versions of Coreutils! Change also the permissions of all files in the folder in order to be able to run the executables.
  
  ```
  obj-llvm$ chmod 755 -R src/
@@ -353,7 +353,7 @@ src$ ls -l echo
  klee-replay: EXIT STATUS: NORMAL (0 seconds)
  ```
  
- Before moving on to testing more complex applications, lets make sure we can get decent coverage of the simple echo.c. The problem before was that we weren’t making enough data symbolic, providing echo with two symbolic arguments should be plenty to cover the entire program. We can use the POSIX runtime --sym-args option to pass multiple options. Here are the steps, after switching back to the obj-llvm/src directory:
+ Before moving on to testing more complex applications, lets make sure we can get decent coverage of the simple **echo.c**. The problem before was that we weren’t making enough data symbolic, providing echo with two symbolic arguments should be plenty to cover the entire program. We can use the POSIX runtime **--sym-args** option to pass multiple options. Here are the steps, after switching back to the obj-llvm/src directory:
  
  ```
  src$ cd ../../obj-llvm/src/

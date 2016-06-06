@@ -122,7 +122,7 @@ $ cd ..
  KLEE: done: generated tests = 3
  ```
  
- You might need to add the following to your **.bashrc** profile :
+ You might need to add the following (in case you see errors while running the example) to your **.bashrc** profile :
 
  ```
  export C_INCLUDE_PATH=/full/path/to/klee/include/:$C_INCLUDE_PATH
