@@ -1,5 +1,20 @@
 # My Tasks
 
+Task list (14.06.2016)
+
+- [ ] Change source of printf as shown in [this patch](https://bitbucket.org/jwilk/fuzzing/src/default/patches/coreutils/printf-args.diff?fileviewer=file-view-default)
+- [ ] Compile and run printf with afl-fuzz
+	- [ ] test different formats
+	- [ ] use one argument per text-file
+	- [ ] use one argument per line
+- [ ] Apply above to echo
+- [ ] Make list of all coreutils program that work with command line arguments
+- [ ] What common patch to be applied for Coreutils, to make afl-fuzz work with command line arguments?
+- [ ] How to read output information from afl-fuzz?
+	- [ ] Read coverage information with afl-cov
+	- [ ] Is coverage information enough to know input to the program?
+	- [ ] If not, then what is the best way to get input to the program, from afl-fuzz?
+
 Task list (7.06.2016)
 
 - [x] Add information about making executables +x
