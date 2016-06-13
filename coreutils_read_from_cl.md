@@ -6,7 +6,6 @@
 * echo
 * env
 * expr
-* factor (also stdin)
 * id
 * install
 * kill
