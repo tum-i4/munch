@@ -11,9 +11,9 @@ Task list (14.06.2016)
 - [x] Make list of all coreutils program that work with command line arguments
 - [ ] What common patch to be applied for Coreutils, to make afl-fuzz work with command line arguments?
 - How to read output information from afl-fuzz?
-	- [ ] Read coverage information with afl-cov
+	- [x] Read coverage information with afl-cov
 	- [ ] Is coverage information enough to know input to the program?
-	- [ ] If not, then what is the best way to get input to the program, from afl-fuzz?
+	- [ ] If not, then what is the best way to get input to the program, from afl-fuzz? *// I haven't found something else yet..*
 
 Task list (7.06.2016)
 
