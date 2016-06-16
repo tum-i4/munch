@@ -9,11 +9,14 @@ Task list (14.06.2016)
 	- [x] use one argument per line
 - [x] Apply above to echo
 - [x] Make list of all coreutils program that work with command line arguments
+
 - [ ] What common patch to be applied for Coreutils, to make afl-fuzz work with command line arguments?
+	- *printf.c is modified	to read the args from stdin or file*
+
 - How to read output information from afl-fuzz?
 	- [x] Read coverage information with afl-cov
-	- [ ] Is coverage information enough to know input to the program?
-	- [ ] If not, then what is the best way to get input to the program, from afl-fuzz? *// I haven't found something else yet..*
+	- [x] Is coverage information enough to know input to the program?
+	- [x] If not, then what is the best way to get input to the program, from afl-fuzz? *// I haven't found something else yet..*
 
 Task list (7.06.2016)
 

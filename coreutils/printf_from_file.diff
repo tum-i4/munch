@@ -1,0 +1,55 @@
+60a61,64
+> #include "string.in.h"
+> #include "stdlib.in.h"
+>
+632a637,686
+> // read from file: ./printf <filename>
+>
+> #undef initialize_main
+> void initialize_main(int *argc, char ***argv)
+> {
+>   static char * iargv[99999];
+>   int iargc;
+>   char str[99999];
+>   char *pch;
+>
+>   FILE *fp;
+>
+>   if (*argc != 2)
+>     return;
+>
+>   fp = fopen ((*argv)[1], "rb");
+>   if(fp == NULL)
+>   {
+>       error (0, 0, _("Error while opening the file."));
+>       usage (EXIT_FAILURE);
+>   }
+>   if (fgets (str, 99999, fp) == NULL)
+>   {
+>       error (0, 0, _("Error while reading the file."));
+>       usage (EXIT_FAILURE);
+>   }
+>   fclose(fp);
+>
+>   iargv[0] = (*argv)[0];
+>   iargc = 1;
+>
+>   if (str[0] != '"' && str[0] != '\'')
+>   {
+>     pch = strtok (str, " \t");
+>     iargv[1] = pch;
+>     iargc++;
+>   }
+>   else
+>   {
+>     pch = strtok (str, "\"\'\n\r\t");
+>     while (pch != NULL)
+>     {
+>       iargv[iargc] = pch;
+>       pch = strtok (NULL, " \"\'\n\r\t ");
+>       iargc++;
+>     }
+>   }
+>   *argc = iargc;
+>   *argv = iargv;
+> }

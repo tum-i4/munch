@@ -1,0 +1,44 @@
+60a61,63
+> #include "string.in.h"
+> #include "stdlib.in.h"
+>
+633a637,675
+> // read from stdin: ./printf
+>
+> #undef initialize_main
+> void initialize_main(int *argc, char ***argv)
+> {
+>   char * iargv[99999];
+>   int iargc;
+>   char str[99999];
+>   char *pch;
+>
+>   if (fgets (str, 99999, stdin) == NULL)
+>   {
+>       error (0, 0, _("Error while reading from stdin."));
+>       usage (EXIT_FAILURE);
+>   }
+>
+>   iargv[0] = (*argv)[0];
+>   iargc = 1;
+>
+>   if (str[0] != '"' && str[0] != '\'')
+>   {
+>     pch = strtok (str, " \t");
+>     iargv[1] = pch;
+>     iargc++;
+>   }
+>   else
+>   {
+>     pch = strtok (str, "\"\'\n\r\t");
+>     while (pch != NULL)
+>     {
+>       iargv[iargc] = pch;
+>       pch = strtok (NULL, " \"\'\n\r\t ");
+>       iargc++;
+>     }
+>   }
+>   *argc = iargc;
+>   *argv = iargv;
+> }
+>
