@@ -1,0 +1,42 @@
+118a119,160
+> // echo reads input from stdin
+> 
+> #undef initialize_main
+> void initialize_main(int *argc, char ***argv)
+> { 
+> 	char str[99999];
+> 	char *pch;
+> 	char *env;
+> 	char *iargv[99999];
+> 	int  iargc;
+> 
+> 	if (fgets (str , 99999 , stdin) == NULL) 
+> 	{
+> 	  fprintf (stderr, _("Error while reading from stdin.\n"));
+> 	  exit (EXIT_FAILURE);
+> 	} 
+> 
+> 	iargv[0] = (*argv)[0];
+> 	iargc = 1;
+> 
+> 	pch = strtok (str, " \"\'\n\r\t ");
+> 	while (pch != NULL) 
+> 	{
+> 	  if(pch[0] == '$') {
+> 	    pch++;
+> 	    pch = getenv(pch);
+> 	    if(pch == NULL) 
+> 	    {
+> 	      pch = strtok (NULL, " \"\'\n\r\t ");
+> 	      continue;
+> 	    }
+> 	}
+> 	iargv[iargc] = pch;
+>       iargc++;
+>       pch = strtok (NULL, " \"\'\n\r\t ");
+> 	}
+> 
+> 	*argc = iargc;
+> 	*argv = iargv;
+> }
+> 
