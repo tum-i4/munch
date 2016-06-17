@@ -33,6 +33,7 @@ Task list (14.06.2016)
 		- *nohup.c*
 		- *pathchk.c*
 		- *pinky.c*
+        - *printenv.c*
 		- *readlink.c*
 		- *rm.c*
 		- *rmdir.c*
@@ -46,7 +47,6 @@ Task list (14.06.2016)
 
 	- *still to check:* 
 		- *install.c*
-		- *printenv.c*
 		- *stat.c*
 		
 	
