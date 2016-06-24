@@ -1,16 +1,41 @@
 # My Tasks
 
-Task list (14.06.2016)
+Task list (23.06.2016)
 
-- [x] Change source of printf as shown in [this patch](https://bitbucket.org/jwilk/fuzzing/src/default/patches/coreutils/printf-args.diff?fileviewer=file-view-default)
-- [x] Compile and run printf with afl-fuzz
-	- [x] test different formats
-	- [x] use one argument per text-file
-	- [x] use one argument per line
-- [x] Apply above to echo
-- [x] Make list of all coreutils program that work with command line arguments
+- [x] Common patch applied to Coreutils
+- [x] Test cases for Coreutils to run afl-fuzz
+	-	basename.c
+	-  dirname.c
+	-  du.c 	
+	-  echo.c
+	-  expr.c
+	-  cat.c
+	-  printf.c
+	-  md5sum.c 
+	- id.c
+	- link.c
+	- ln.c
+	- ls.c
+	- mkdir.c
+	- mkfifo.c
+	- mv.c
+	- nice.c
+	- pathchk.c
+	- pinky.c
+	- printenv.c
+	- vdir.c
+	- seq.c
+	- yes.c
+	- sleep.c
+	- factor.c
+	- true.c
+	- false.c
+	- tac.c
 
-- [ ] What common patch to be applied for Coreutils, to make afl-fuzz work with command line arguments?
+
+Task list (17.06.2016)  
+
+- [x] What common patch to be applied for Coreutils, to make afl-fuzz work with command line arguments?
 	- *printf.c is modified	to read from stdin or file (needs more testing)* 
 	- *common patch to read from stdin:*
 		- *echo.c* 
@@ -48,8 +73,19 @@ Task list (14.06.2016)
 	- *still to check:* 
 		- *install.c*
 		- *stat.c*
+  
+Task list (14.06.2016)
+
+- [x] Change source of printf as shown in [this patch](https://bitbucket.org/jwilk/fuzzing/src/default/patches/coreutils/printf-args.diff?fileviewer=file-view-default)
+- [x] Compile and run printf with afl-fuzz
+	- [x] test different formats
+	- [x] use one argument per text-file
+	- [x] use one argument per line
+- [x] Apply above to echo
+- [x] Make list of all coreutils program that work with command line arguments
+
+- [x] What common patch to be applied for Coreutils, to make afl-fuzz work with command line arguments?
 		
-	
 - How to read output information from afl-fuzz?
 	- [x] Read coverage information with afl-cov
 	- [x] Is coverage information enough to know input to the program?
