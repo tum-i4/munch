@@ -1,0 +1,4 @@
+/usr/local ./
+--help
+--version
+-v /usr/bin ./

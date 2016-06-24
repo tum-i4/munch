@@ -1,0 +1,4 @@
+-l
+-al
+-l .
+-l /usr/local
