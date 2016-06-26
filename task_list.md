@@ -1,5 +1,14 @@
 # My Tasks
 
+Task list (30.06.2016)
+
+- [ ] Apply the common patch to all coreutils
+- [ ] Split coreutils into 2 categories:
+	- reading from a file
+	- reading from stdin
+- [ ] Write test cases for all coreutils and make sure they work with afl-fuzz
+	
+
 Task list (23.06.2016)
 
 - [x] Common patch applied to Coreutils
