@@ -1,5 +1,0 @@
---help
---version
-1233 555555
-abc xyz "wwww" $PATH
-
