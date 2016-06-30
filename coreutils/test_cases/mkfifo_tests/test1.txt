@@ -1,3 +1,0 @@
---help
---version
-named_pipe

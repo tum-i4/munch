@@ -1,2 +1,0 @@
-dir1/str dir2/str
-$PATH

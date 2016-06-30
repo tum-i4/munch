@@ -1,5 +1,0 @@
--a /usr/local
--A /usr/bin
-./
---version
---help

@@ -1,5 +1,0 @@
--l $USER
--b $USER
--h $USER
---version
---help
