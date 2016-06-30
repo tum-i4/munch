@@ -1,0 +1,3 @@
+-T sample.txt test2.txt
+--help
+--version

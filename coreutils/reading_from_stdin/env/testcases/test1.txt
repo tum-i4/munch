@@ -1,0 +1,4 @@
+foo=bar
+-i foo=bar
+--help
+--version

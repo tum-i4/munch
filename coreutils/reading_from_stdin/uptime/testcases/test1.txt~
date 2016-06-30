@@ -1,0 +1,4 @@
+/var/log/utmp
+/var/log/wtmp
+--help
+--version

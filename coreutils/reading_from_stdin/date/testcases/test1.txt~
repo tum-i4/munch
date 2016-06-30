@@ -1,0 +1,5 @@
+--date="yesterday"
+--date="1 month ago"
+--date='3 seconds ago'
+--date=@60
+-r datefile
