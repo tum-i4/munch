@@ -6,7 +6,7 @@ Task list (30.06.2016)
 - [x] Split coreutils into 2 categories:
 	- reading from a file
 	- reading from stdin
-- [ ] Write test cases for all coreutils and make sure they work with afl-fuzz
+- [x] Write test cases for all coreutils and make sure they work with afl-fuzz
 	- test cases missing for:
 		-   chroot : ./chroot \$HOME echo \$PWD : ./chroot: cannot change root directory to /home/eirini: Operation not permitted
 
