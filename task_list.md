@@ -2,12 +2,19 @@
 
 Task list (30.06.2016)
 
-- [ ] Apply the common patch to all coreutils
-- [ ] Split coreutils into 2 categories:
+- [x] Apply the common patch to all coreutils
+- [x] Split coreutils into 2 categories:
 	- reading from a file
 	- reading from stdin
 - [ ] Write test cases for all coreutils and make sure they work with afl-fuzz
-	
+	- test cases missing for:
+		-   chroot : ./chroot \$HOME echo \$PWD : ./chroot: cannot change root directory to /home/eirini: Operation not permitted
+
+		-   groups
+		-   runcon : ./runcon: runcon may be used only on a SELinux kernel
+		-   setuidgid
+		-   su
+		-   test or [
 
 Task list (23.06.2016)
 
