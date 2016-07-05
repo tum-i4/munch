@@ -1,5 +1,10 @@
 # My Tasks
 
+Task list (07.07.2016)
+
+- [ ] Automate the whole process to test coreutils with afl-fuzz
+- [ ] fuzz coreutils on multiple cores
+
 Task list (30.06.2016)
 
 - [x] Apply the common patch to all coreutils
