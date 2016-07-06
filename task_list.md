@@ -2,8 +2,11 @@
 
 Task list (07.07.2016)
 
-- [ ] Automate the whole process to test coreutils with afl-fuzz
-- [ ] fuzz coreutils on multiple cores
+- [x] Automate the whole process to test coreutils with afl-fuzz
+	- [-] PROGRAM ABORT : Non-alphanumeric fuzzer ID specified via -S or -M
+		- Location : fix_up_sync(), afl-fuzz.c:7226
+ 	
+- [x] fuzz coreutils on multiple cores
 
 Task list (30.06.2016)
 
