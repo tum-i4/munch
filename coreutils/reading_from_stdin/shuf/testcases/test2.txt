@@ -1,0 +1,1 @@
+-e random words permutation 1 666 fuzzing

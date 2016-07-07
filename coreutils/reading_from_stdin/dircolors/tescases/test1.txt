@@ -1,5 +1,1 @@
 -b
--c
--p
---help
---version

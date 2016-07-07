@@ -1,6 +1,1 @@
 am i
--aH
--q
--u
---help
---version

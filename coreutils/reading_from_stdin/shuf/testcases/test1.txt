@@ -1,5 +1,1 @@
 -i 1-10
--i 1-4
--e random words permutation 1 666 fuzzing
---help
---version

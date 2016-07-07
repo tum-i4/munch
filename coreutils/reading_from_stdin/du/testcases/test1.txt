@@ -1,3 +1,1 @@
 --exclude='*.o'
--k /usr/local
--mh /usr/local

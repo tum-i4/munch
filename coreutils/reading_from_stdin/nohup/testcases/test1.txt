@@ -1,3 +1,1 @@
 echo $HOME
-ls -l
-printf "%d\n" 1 

@@ -1,4 +1,1 @@
 5s
-8
---version
---help

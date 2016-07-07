@@ -1,4 +1,1 @@
 -p test_dir
-new_dir
---version
---help

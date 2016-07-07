@@ -1,4 +1,1 @@
 /var/run/utmp
-/var/log/wtmp
---help
---version

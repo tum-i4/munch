@@ -1,3 +1,1 @@
 test_node -p
---help
---version

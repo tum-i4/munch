@@ -1,8 +1,1 @@
 -m
--s
--n
--i
--r
--o
---help
---version

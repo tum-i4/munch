@@ -1,4 +1,1 @@
 examplefile.XXXX
--t examplef.XXXX
---help
---version

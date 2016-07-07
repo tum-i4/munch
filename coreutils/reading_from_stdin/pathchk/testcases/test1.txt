@@ -1,4 +1,1 @@
--p 
--P
---version
---help
+-p

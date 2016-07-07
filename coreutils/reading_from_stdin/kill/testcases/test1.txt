@@ -1,6 +1,1 @@
 -l
--t
--l 10
--l 11
---help
---version
