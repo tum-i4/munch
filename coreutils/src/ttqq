@@ -1,0 +1,380 @@
+STTY(1)                          User Commands                         STTY(1)
+
+
+
+NNAAMMEE
+       stty - change and print terminal line settings
+
+SSYYNNOOPPSSIISS
+       ssttttyy [_-_F _D_E_V_I_C_E _| _-_-_f_i_l_e_=_D_E_V_I_C_E] [_S_E_T_T_I_N_G]...
+       ssttttyy [_-_F _D_E_V_I_C_E _| _-_-_f_i_l_e_=_D_E_V_I_C_E] [_-_a_|_-_-_a_l_l]
+       ssttttyy [_-_F _D_E_V_I_C_E _| _-_-_f_i_l_e_=_D_E_V_I_C_E] [_-_g_|_-_-_s_a_v_e]
+
+DDEESSCCRRIIPPTTIIOONN
+       Print or change terminal characteristics.
+
+       Mandatory  arguments  to  long  options are mandatory for short options
+       too.
+
+       --aa, ----aallll
+              print all current settings in human-readable form
+
+       --gg, ----ssaavvee
+              print all current settings in a stty-readable form
+
+       --FF, ----ffiillee=_D_E_V_I_C_E
+              open and use the specified DEVICE instead of stdin
+
+       ----hheellpp display this help and exit
+
+       ----vveerrssiioonn
+              output version information and exit
+
+       Optional - before SETTING indicates negation.   An  *  marks  non-POSIX
+       settings.  The underlying system defines which settings are available.
+
+   SSppeecciiaall cchhaarraacctteerrss::
+       * dsusp CHAR
+              CHAR will send a terminal stop signal once input flushed
+
+       eof CHAR
+              CHAR will send an end of file (terminate the input)
+
+       eol CHAR
+              CHAR will end the line
+
+       * eol2 CHAR
+              alternate CHAR for ending the line
+
+       erase CHAR
+              CHAR will erase the last character typed
+
+       intr CHAR
+              CHAR will send an interrupt signal
+
+       kill CHAR
+              CHAR will erase the current line
+
+       * lnext CHAR
+              CHAR will enter the next character quoted
+
+       quit CHAR
+              CHAR will send a quit signal
+
+       * rprnt CHAR
+              CHAR will redraw the current line
+
+       start CHAR
+              CHAR will restart the output after stopping it
+
+       stop CHAR
+              CHAR will stop the output
+
+       susp CHAR
+              CHAR will send a terminal stop signal
+
+       * swtch CHAR
+              CHAR will switch to a different shell layer
+
+       * werase CHAR
+              CHAR will erase the last word typed
+
+   SSppeecciiaall sseettttiinnggss::
+       N      set the input and output speeds to N bauds
+
+       * cols N
+              tell the kernel that the terminal has N columns
+
+       * columns N
+              same as cols N
+
+       ispeed N
+              set the input speed to N
+
+       * line N
+              use line discipline N
+
+       min N  with --iiccaannoonn, set N characters minimum for a completed read
+
+       ospeed N
+              set the output speed to N
+
+       * rows N
+              tell the kernel that the terminal has N rows
+
+       * size print the number of rows and columns according to the kernel
+
+       speed  print the terminal speed
+
+       time N with --iiccaannoonn, set read timeout of N tenths of a second
+
+   CCoonnttrrooll sseettttiinnggss::
+       [-]clocal
+              disable modem control signals
+
+       [-]cread
+              allow input to be received
+
+       * [-]crtscts
+              enable RTS/CTS handshaking
+
+       * [-]cdtrdsr
+              enable DTR/DSR handshaking
+
+       csN    set character size to N bits, N in [5..8]
+
+       [-]cstopb
+              use two stop bits per character (one with '-')
+
+       [-]hup send a hangup signal when the last process closes the tty
+
+       [-]hupcl
+              same as [-]hup
+
+       [-]parenb
+              generate parity bit in output and expect parity bit in input
+
+       [-]parodd
+              set odd parity (or even parity with '-')
+
+   IInnppuutt sseettttiinnggss::
+       [-]brkint
+              breaks cause an interrupt signal
+
+       [-]icrnl
+              translate carriage return to newline
+
+       [-]ignbrk
+              ignore break characters
+
+       [-]igncr
+              ignore carriage return
+
+       [-]ignpar
+              ignore characters with parity errors
+
+       * [-]imaxbel
+              beep and do not flush a full input buffer on a character
+
+       [-]inlcr
+              translate newline to carriage return
+
+       [-]inpck
+              enable input parity checking
+
+       [-]istrip
+              clear high (8th) bit of input characters
+
+       * [-]iutf8
+              assume input characters are UTF-8 encoded
+
+       * [-]iuclc
+              translate uppercase characters to lowercase
+
+       * [-]ixany
+              let any character restart output, not only start character
+
+       [-]ixoff
+              enable sending of start/stop characters
+
+       [-]ixon
+              enable XON/XOFF flow control
+
+       [-]parmrk
+              mark parity errors (with a 255-0-character sequence)
+
+       [-]tandem
+              same as [-]ixoff
+
+   OOuuttppuutt sseettttiinnggss::
+       * bsN  backspace delay style, N in [0..1]
+
+       * crN  carriage return delay style, N in [0..3]
+
+       * ffN  form feed delay style, N in [0..1]
+
+       * nlN  newline delay style, N in [0..1]
+
+       * [-]ocrnl
+              translate carriage return to newline
+
+       * [-]ofdel
+              use delete characters for fill instead of null characters
+
+       * [-]ofill
+              use fill (padding) characters instead of timing for delays
+
+       * [-]olcuc
+              translate lowercase characters to uppercase
+
+       * [-]onlcr
+              translate newline to carriage return-newline
+
+       * [-]onlret
+              newline performs a carriage return
+
+       * [-]onocr
+              do not print carriage returns in the first column
+
+       [-]opost
+              postprocess output
+
+       * tabN horizontal tab delay style, N in [0..3]
+
+       * tabs same as tab0
+
+       * --ttaabbss
+              same as tab3
+
+       * vtN  vertical tab delay style, N in [0..1]
+
+   LLooccaall sseettttiinnggss::
+       [-]crterase
+              echo erase characters as backspace-space-backspace
+
+       * crtkill
+              kill all line by obeying the echoprt and echoe settings
+
+       * --ccrrttkkiillll
+              kill all line by obeying the echoctl and echok settings
+
+       * [-]ctlecho
+              echo control characters in hat notation ('^c')
+
+       [-]echo
+              echo input characters
+
+       * [-]echoctl
+              same as [-]ctlecho
+
+       [-]echoe
+              same as [-]crterase
+
+       [-]echok
+              echo a newline after a kill character
+
+       * [-]echoke
+              same as [-]crtkill
+
+       [-]echonl
+              echo newline even if not echoing other characters
+
+       * [-]echoprt
+              echo erased characters backward, between '\' and '/'
+
+       [-]icanon
+              enable erase, kill, werase, and rprnt special characters
+
+       [-]iexten
+              enable non-POSIX special characters
+
+       [-]isig
+              enable interrupt, quit, and suspend special characters
+
+       [-]noflsh
+              disable flushing after interrupt and quit special characters
+
+       * [-]prterase
+              same as [-]echoprt
+
+       * [-]tostop
+              stop background jobs that try to write to the terminal
+
+       * [-]xcase
+              with icanon, escape with '\' for uppercase characters
+
+   CCoommbbiinnaattiioonn sseettttiinnggss::
+       * [-]LCASE
+              same as [-]lcase
+
+       cbreak same as --iiccaannoonn
+
+       --ccbbrreeaakk
+              same as icanon
+
+       cooked same  as  brkint ignpar istrip icrnl ixon opost isig icanon, eof
+              and eol characters to their default values
+
+       --ccooookkeedd
+              same as raw
+
+       crt    same as echoe echoctl echoke
+
+       dec    same as echoe echoctl echoke --iixxaannyy intr ^c erase 0177 kill ^u
+
+       * [-]decctlq
+              same as [-]ixany
+
+       ek     erase and kill characters to their default values
+
+       evenp  same as parenb --ppaarroodddd cs7
+
+       --eevveennpp same as --ppaarreennbb cs8
+
+       * [-]lcase
+              same as xcase iuclc olcuc
+
+       litout same as --ppaarreennbb --iissttrriipp --ooppoosstt cs8
+
+       --lliittoouutt
+              same as parenb istrip opost cs7
+
+       nl     same as --iiccrrnnll --oonnllccrr
+
+       --nnll    same as icrnl --iinnllccrr --iiggnnccrr onlcr --ooccrrnnll --oonnllrreett
+
+       oddp   same as parenb parodd cs7
+
+       --ooddddpp  same as --ppaarreennbb cs8
+
+       [-]parity
+              same as [-]evenp
+
+       pass8  same as --ppaarreennbb --iissttrriipp cs8
+
+       --ppaassss88 same as parenb istrip cs7
+
+       raw    same as --iiggnnbbrrkk --bbrrkkiinntt --iiggnnppaarr --ppaarrmmrrkk  --iinnppcckk  --iissttrriipp  --iinnllccrr
+              --iiggnnccrr  --iiccrrnnll   --iixxoonn   --iixxooffff   --iiuuccllcc  --iixxaannyy --iimmaaxxbbeell --ooppoosstt
+              --iissiigg --iiccaannoonn --xxccaassee min 1 time 0
+
+       --rraaww   same as cooked
+
+       sane   same as cread --iiggnnbbrrkk brkint --iinnllccrr --iiggnnccrr icrnl  --iiuuttff88  --iixxooffff
+              --iiuuccllcc  --iixxaannyy  imaxbel opost --oollccuucc --ooccrrnnll onlcr --oonnooccrr --oonnllrreett
+              --ooffiillll --ooffddeell nl0 cr0 tab0 bs0 vt0 ff0 isig icanon  iexten  echo
+              echoe  echok  --eecchhoonnll  --nnooffllsshh  --xxccaassee  --ttoossttoopp --eecchhoopprrtt echoctl
+              echoke, all special characters to their default values
+
+       Handle the tty line connected to standard  input.   Without  arguments,
+       prints  baud  rate, line discipline, and deviations from stty sane.  In
+       settings, CHAR is taken literally, or coded as in  ^c,  0x37,  0177  or
+       127; special values ^- or undef used to disable special characters.
+
+AAUUTTHHOORR
+       Written by David MacKenzie.
+
+RREEPPOORRTTIINNGG BBUUGGSS
+       Report stty bugs to bug-coreutils@gnu.org
+       GNU coreutils home page: <http://www.gnu.org/software/coreutils/>
+       General help using GNU software: <http://www.gnu.org/gethelp/>
+       Report stty translation bugs to <http://translationproject.org/team/>
+
+CCOOPPYYRRIIGGHHTT
+       Copyright  ©  2013  Free Software Foundation, Inc.  License GPLv3+: GNU
+       GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+       This is free software: you are free  to  change  and  redistribute  it.
+       There is NO WARRANTY, to the extent permitted by law.
+
+SSEEEE AALLSSOO
+       The  full documentation for ssttttyy is maintained as a Texinfo manual.  If
+       the iinnffoo and ssttttyy programs are properly installed  at  your  site,  the
+       command
+
+              iinnffoo ccoorreeuuttiillss ''ssttttyy iinnvvooccaattiioonn''
+
+       should give you access to the complete manual.
+
+
+
+GNU coreutils 8.21                March 2016                           STTY(1)
