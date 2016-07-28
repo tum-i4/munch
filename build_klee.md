@@ -11,7 +11,7 @@
  2. Install dependencies:
 
  ```
- $ sudo apt-get install build-essential curl git bison flex bc libcap-dev git cmake libboost-all-dev libncurses5-dev python-minimal python-pip unzip ncurses-dev
+ $ sudo apt-get install build-essential curl git bison flex bc libcap-dev git cmake libboost-all-dev libncurses5-dev python-minimal python-pip unzip ncurses-dev zlib1g-dev
  ```
   
  3. Set the following environment variables in a config file (like **.bashrc**):
@@ -21,7 +21,7 @@ export C_INCLUDE_PATH=/usr/include/x86_64-linux-gnu
 export CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu
 ```
 
- 4. Install LLVM 3.4. Add the following lines to your to your **/etc/apt/sources.list**:
+ 4. Install LLVM 3.4. Add the following lines to your **/etc/apt/sources.list**:
 
  ```
 deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.4 main  
@@ -66,7 +66,7 @@ deb-src http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.4 main
 6. Build KLEE-uclibc and the POSIX environment model:
 
  ```
- $ git clone --depth 1 --branch klee_0_9_29 https://github.com/
+ $ git clone --depth 1 --branch klee_0_9_29 https://github.com/klee/klee-uclibc.git
  $ cd klee-uclibc  
  $ ./configure --make-llvm-lib  
  $ make -j`nproc` 
