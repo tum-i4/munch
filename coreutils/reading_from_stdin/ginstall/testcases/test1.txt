@@ -1,1 +1,1 @@
--T sample.txt test2.txt
+-T ../sample.txt test2.txt
