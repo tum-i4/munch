@@ -29,7 +29,10 @@ def main(argv):
             fuzzed_binary = path_to_target + filename
             fuzzed_instance = filename + str(counter) #sync id of the instance
             # master
-            args = ["afl-fuzz", "-i", testcase_dir, "-o", target_sync_dir, "-M", fuzzed_instance, fuzzed_binary]
+            if filename == "yes":
+                args = ["afl-fuzz", "-t", "500+", "-i", testcase_dir, "-o", target_sync_dir, "-M", fuzzed_instance, fuzzed_binary]
+            else:    
+                args = ["afl-fuzz", "-i", testcase_dir, "-o", target_sync_dir, "-M", fuzzed_instance, fuzzed_binary]
             proc = subprocess.Popen(args)
             pids.append(proc.pid)
  
@@ -37,7 +40,10 @@ def main(argv):
                 counter += 1
                 fuzzed_instance = filename + str(counter)
                 # slaves
-                args = ["afl-fuzz", "-i", testcase_dir, "-o", target_sync_dir, "-S", fuzzed_instance, fuzzed_binary]
+                if filename == "yes":
+                    args = ["afl-fuzz", "-t", "500+", "-i", testcase_dir, "-o", target_sync_dir, "-S", fuzzed_instance, fuzzed_binary]
+                else:
+                    args = ["afl-fuzz", "-i", testcase_dir, "-o", target_sync_dir, "-S", fuzzed_instance, fuzzed_binary]
                 proc = subprocess.Popen(args)
                 pids.append(proc.pid)
 

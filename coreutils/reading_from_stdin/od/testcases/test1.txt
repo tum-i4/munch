@@ -1,0 +1,1 @@
+-Ax -c ../file1.txt
