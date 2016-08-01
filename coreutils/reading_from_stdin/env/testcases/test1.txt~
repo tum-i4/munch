@@ -1,4 +1,0 @@
-foo=bar env
--i foo=bar env
---help
---version

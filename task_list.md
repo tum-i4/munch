@@ -1,5 +1,11 @@
 # My Tasks
 
+Task list (29.07.2016)
+
+- [x] Setup fresh system in LRZ
+- [x] Install LLVM, afl, KLEE and download coreutils
+- [x] Run script to fuzz coreutils for 5' each
+
 Task list (07.07.2016)
 
 - [x] Automate the whole process to test coreutils with afl-fuzz
