@@ -1,5 +1,10 @@
 # My Tasks
 
+Task list (02.08.2016)
+
+- [x] Run script for all coreutils in LRZ for 1h for each binary
+- [x] Check Sebastian's obfuscated files
+
 Task list (29.07.2016)
 
 - [x] Setup fresh system in LRZ
