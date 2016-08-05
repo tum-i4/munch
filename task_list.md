@@ -1,5 +1,16 @@
 # My Tasks
 
+Things to discuss after holidays (19.08.2016):
+
+1. List all coreutils that are not fuzzed (approx. 20)
+2. List all crashes and hangs 
+	- Classify w.o.t coreultils
+	- Get test input
+3. Get full coverage information
+4. Run AFL for remaining coreutils
+5. Run on obfuscated programs
+  
+
 Task list (02.08.2016)
 
 - [x] Run script for all coreutils in LRZ for 1h for each binary
