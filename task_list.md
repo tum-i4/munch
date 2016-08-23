@@ -1,5 +1,9 @@
 # My Tasks
 
+Task list (25.08.2016)
+
+- [x] Run script again for all coreutils apart from the problematic ones
+
 Things to discuss after holidays (19.08.2016):
 
 1. List all coreutils that are not fuzzed (approx. 20)
