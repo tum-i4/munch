@@ -46,3 +46,45 @@ dd
 
 stty
 
+// Coreutils also not fuzzed:
+
+arch
+
+base64
+
+chroot
+
+chcon
+
+false
+
+true
+
+hostid
+
+hostname
+
+install
+
+logname
+
+pwd
+
+runcon
+
+setuidgid
+
+su
+
+sync
+
+tee
+
+tty
+
+tr
+
+users
+
+whoami
+
