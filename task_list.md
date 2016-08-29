@@ -2,11 +2,13 @@
 
 Task list (30.08.2016)
 
-- [ ] Get the coverage from coreutils fuzzed with AFL
-	- check for the crashes + hangs
-	- compute also the percentage of coverage
+- [x] Get the coverage from coreutils fuzzed with AFL
+	- check for the crashes + hangs:
+		- afl-cov checks only the queue folder
+	- compute also the percentage of coverage:
+		-  gcc -fpreprocessed -dD -E -P SRC_FILE--> removes new lines and comments
 	
-- [ ] Run the regexp.c program from KLEE and fuzz it with AFL
+- [x] Run the Regexp.c program from KLEE and fuzz it with AFL
 	- Check if it finds crashes like KLEE
 	
 Task list (25.08.2016)
