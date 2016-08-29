@@ -1,5 +1,14 @@
 # My Tasks
 
+Task list (30.08.2016)
+
+- [ ] Get the coverage from coreutils fuzzed with AFL
+	- check for the crashes + hangs
+	- compute also the percentage of coverage
+	
+- [ ] Run the regexp.c program from KLEE and fuzz it with AFL
+	- Check if it finds crashes like KLEE
+	
 Task list (25.08.2016)
 
 - [x] Run script again for all coreutils apart from the problematic ones
