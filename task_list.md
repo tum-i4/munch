@@ -3,7 +3,7 @@
 Task list (08.09.2016)
 
 - [x] Repeat previous week's tasks
-- [ ] Check also the simple example that crashes from MACKE
+- [x] Check also the simple example that crashes from MACKE
 - [x] Look on Google Scholar for any papers that compare symbolic execution and AFL
 
 Task list (30.08.2016)
