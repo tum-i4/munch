@@ -1,5 +1,13 @@
 # My Tasks
 
+Task list (29.09.2016)
+
+- [x] Use ASAN with afl and read the output
+	- add to PATH llvm-symbolizer and then run the output with: 	 ASAN_OPTIONS=symbolize=1 ./a.out
+- [x] read the tests in crashes folder and try to find their contents
+- [x] MACKE example doesn't run properly with afl
+- [x] make scripts to produce code coverage results from afl-fuzz test cases
+
 Task list (08.09.2016)
 
 - [x] Repeat previous week's tasks
