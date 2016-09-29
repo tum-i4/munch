@@ -1,5 +1,10 @@
 # My Tasks
 
+Task list (06.10.2016)
+
+- [ ] Search for papers that have already covered things around the area we are working on
+- [ ] Check the KLEE paper to see which coreutils crash (and which lines are covered) and test with afl to see if we can get the same results (~24h fuzzing)
+
 Task list (29.09.2016)
 
 - [x] Use ASAN with afl and read the output
