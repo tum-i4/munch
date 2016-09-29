@@ -6,16 +6,15 @@ import subprocess
 
 def main():
 
-	stdin = ["basename", "df", "dirname", "echo" , "factor", "id", "ls", "nohup", "pinky", "printf", "shuf", "touch", 
+	stdin = ["basename", "df", "dirname", "echo" , "factor", "id", "ls", "nohup", "pinky", "printf", "shuf", "touch",
 	          "uptime", "who", "comm", "dir", "du", "expr", "ginstall", "join", "nice", "pathchk", "printenv", "seq", "test", "uname", "vdir", "yes"]
-	
+
 	file_progs = ["base64", "cat", "cksum", "expand", "fmt", "fold", "head", "md5sum", "paste", "pr", "ptx", "sha1sum" "sha224sum", "sha256sum", "sha384sum",
 	        "sha512sum", "sort" "stat", "sum", "tac", "tail", "tsort", "unexpand", "uniq", "wc"]
 
 	for prog in stdin:
 		path_to_afl_results = "/media/vdc/coreutils-6.10/obj-afl/test_afl/sync_dir/" + prog
-		command = "\"./src/./" + prog + " < AFL_FILE\""
-		print(command)
+		command = "./src/" + prog + " AFL_FILE"
 		code_dir = "."
 		src_file = "media/vdc/coreutils-6.10/src/" + prog + ".c"
 		output = prog + ".txt"
@@ -27,7 +26,6 @@ def main():
 	for prog in file_progs:
 		path_to_afl_results = "/media/vdc/coreutils-6.10/obj-afl/test_afl/sync_dir/" + prog
 		command = "\"./src/./" + prog + " AFL_FILE\""
-		print("command: " + command)
 		code_dir = "."
 		src_file = "media/vdc/coreutils-6.10/src/" + prog + ".c"
 		output = prog + ".txt"
@@ -37,7 +35,7 @@ def main():
 		file_to_write.close()
 
 	return 1
-     
+
 if __name__ == '__main__':
     main()
 
