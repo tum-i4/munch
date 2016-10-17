@@ -1,10 +1,18 @@
 # My Tasks
 
+Task list (20.10.2016)
+
+- [ ] Try with AFL Thomas programs 
+	- less-481
+	- diff-3.4
+	- bison-3.0.4
+	- ngircd-23
+	- tar-1.29		
 
 Task list (13.10.2016)
 
-- [ ] Try all KLEE found errors - can they be found by AFL?
-- [ ] Try all the bugs with KLEE again (coreutils-6.10) - same time as the paper*2
+- [x] Try all KLEE found errors - can they be found by AFL?
+- [x] Try all the bugs with KLEE again (coreutils-6.10) - same time as the paper*2
 
 Task list (06.10.2016)
 
