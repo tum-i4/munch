@@ -2,12 +2,12 @@
 
 Task list (20.10.2016)
 
-- [ ] Try with AFL Thomas programs 
+- [x] Try with AFL Thomas programs:
 	- less-481
 	- diff-3.4
-	- bison-3.0.4
-	- ngircd-23
-	- tar-1.29		
+	- tar-1.29	
+	- grep-2.25
+	- bison-3.0.4	
 
 Task list (13.10.2016)
 
