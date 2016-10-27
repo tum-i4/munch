@@ -1,5 +1,29 @@
 # My Tasks
 
+Task list (27.10.2016)
+
+- [x] Use *afl-clang* to compile Regexp.c (KLEE-examples) and 
+	- generate Regexp.bc file and run it with KLEE
+	- generate the instrumented binary and fuzz it with AFL
+	- the '-O3' option from the params of the compiler should be removed from the **afl-gcc.c** file in order to work properly
+	- Compilation command invoking afl-clang is now: 
+
+	 ```
+	 $ clang -emit-llvm -c <program_name>.c \
+	  	  -B path/to/as -no-integrated-as -g -funroll-loops -D__AFL_COMPILER=1
+	 ```
+	 or compile with AFL\_DONT\_OPTIMIZE=1
+	 
+	 - cannot make it run using **afl-clang-fast** - I get this error after running with KLEE:
+	 	
+	 	```
+	 	KLEE: WARNING: undefined reference to variable: \__afl\_area\_ptr
+		KLEE: WARNING: undefined reference to variable: \__afl\_prev\_loc
+		KLEE: ERROR: unable to load symbol(__afl_area_ptr) while initializing globals.
+		```		 	
+	 
+- [x] Run afl-cov on the results and create a script to find the functions that were covered
+	 
 Task list (20.10.2016)
 
 - [x] Try with AFL Thomas programs:
