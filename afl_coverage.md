@@ -4,10 +4,17 @@
 
 **afl-cov** uses test case files produced by the [AFL fuzzer](http://lcamtuf.coredump.cx/afl/) afl-fuzz to generate gcov code coverage results for a targeted binary.
 
-#### Prerequisites:
+#### Prerequisites
 * afl-fuzz
 * python
 * gcov, lcov, genhtml
+
+#### Installation
+
+```
+git clone https://github.com/mrash/afl-cov.git
+sudo ln -s path/to/afl-cov /usr/bin/afl-cov
+```
 
 #### Workflow
 
@@ -19,6 +26,7 @@ Try with **cat** (without **--live** mode, so the existing results of afl-fuzz f
 * `/path/to/afl-fuzz-output/` is is the output directory of afl-fuzz.
 
 * The `AFL_FILE` string above refers to the test case file that AFL will build in the **queue/** directory under `/path/to/afl-fuzz-output`.  afl-cov will automatically substitute it with each AFL queue/id:NNNNNN* in succession as it builds the code coverage reports.
+* The example below handles the case where a file is read from the **filesystem**.
 
  ```
  $ cd /path/to/project-gcov/
@@ -200,3 +208,92 @@ Try with **cat** (without **--live** mode, so the existing results of afl-fuzz f
         Non-zero exit status '2' for CMD: /usr/bin/genhtml --output-directory ../obj-afl/coreutils_testcases/cat_results_full//cov/web ../obj-afl/coreutils_testcases/cat_results_full//cov/lcov/trace.lcov_info_final
     [+] Final lcov web report: ../obj-afl/coreutils_testcases/cat_results_full//cov/web/index.html        
  ```
+
+* For the other style where the AFL fuzzing cycle is fuzzing the targeted binary via **stdin**, see the example below.
+* Try with **echo:**
+
+ ```
+ $ cd /path/to/project-gcov/
+ $ afl-cov -d ../obj-afl/test_afl/sync_dir/yes -e "./src/./echo < AFL_FILE" -c . --enable-branch-coverage --coverage-include-lines  
+ 
+  *** Imported 186 new test cases from: ../obj-afl/test_afl/sync_dir/echo/echo4/queue
+
+    [+] AFL test case: id:000000,orig:test1.txt (0 / 186), cycle: 0
+        lines......: 0.2% (78 of 36764 lines)
+        functions..: 0.3% (5 of 1727 functions)
+        branches...: 3.1% (36 of 1169 branches)
+
+    Coverage diff (init) id:000000,orig:test1.txt
+    diff (init) -> id:000000,orig:test1.txt
+    New src file: /media/vdc/coreutils-6.10/lib/closeout.c
+      New 'function' coverage: close_stdout()
+      New 'line' coverage: 69
+      New 'line' coverage: 71
+      New 'line' coverage: 83
+      New 'line' coverage: 85
+    New src file: /media/vdc/coreutils-6.10/lib/close-stream.c
+      New 'function' coverage: close_stream()
+      New 'line' coverage: 53
+      New 'line' coverage: 55
+      New 'line' coverage: 56
+      New 'line' coverage: 57
+      New 'line' coverage: 67
+      New 'line' coverage: 74
+    New src file: /media/vdc/coreutils-6.10/src/echo.c
+      New 'function' coverage: initialize_main()
+      New 'function' coverage: main()
+      New 'line' coverage: 124
+      New 'line' coverage: 129
+      New 'line' coverage: 131
+      New 'line' coverage: 132
+      New 'line' coverage: 133
+      New 'line' coverage: 134
+      
+      ...
+      
+        New src file: /media/vdc/coreutils-6.10/lib/long-options.c
+      New 'function' coverage: parse_long_options()
+      New 'line' coverage: 44
+      New 'line' coverage: 55
+      New 'line' coverage: 58
+      New 'line' coverage: 60
+      New 'line' coverage: 83
+      New 'line' coverage: 87
+      New 'line' coverage: 88
+
+
+
+  ++++++ BEGIN - first exec output for CMD: ./src/./echo < ../obj-afl/test_afl/sync_dir/echo/echo4/queue/id:000000,orig:test1.txt
+        ---
+        ./src/./echo
+        ---
+        This
+        ---
+        is 
+        ---
+        test1
+        ---
+        for
+        ---
+        echo.
+        This is test1 for echo.
+     ++++++ END
+
+    [+] AFL test case: id:000001,orig:test2.txt (1 / 186), cycle: 0
+        lines......: 0.2% (78 of 36764 lines)
+        functions..: 0.3% (5 of 1727 functions)
+        branches...: 3.1% (36 of 1169 branches)
+    [+] AFL test case: id:000002,orig:test3.txt (2 / 186), cycle: 0
+        lines......: 0.2% (78 of 36764 lines)
+        functions..: 0.3% (5 of 1727 functions)
+        branches...: 3.1% (36 of 1169 branches)
+    [+] AFL test case: id:000003,orig:test4.txt (3 / 186), cycle: 0
+        lines......: 0.2% (78 of 36764 lines)
+        functions..: 0.3% (5 of 1727 functions)
+        branches...: 3.2% (37 of 1169 branches)
+    [+] AFL test case: id:000004,orig:test5.txt (4 / 186), cycle: 0
+        lines......: 0.2% (78 of 36764 lines)
+     
+     ...
+    ```
+

@@ -1,12 +1,47 @@
 # My Tasks
 
+Task list (20.10.2016)
+
+- [x] Try with AFL Thomas programs:
+	- less-481
+	- diff-3.4
+	- tar-1.29	
+	- grep-2.25
+	- bison-3.0.4	
+
+Task list (13.10.2016)
+
+- [x] Try all KLEE found errors - can they be found by AFL?
+- [x] Try all the bugs with KLEE again (coreutils-6.10) - same time as the paper*2
+
+Task list (06.10.2016)
+
+- [x] Search for papers that have already covered things around the area we are working on
+- [x] Check the KLEE paper to see which coreutils crash (and which lines are covered) and test with afl to see if we can get the same results (~24h fuzzing)
+
+Task list (29.09.2016)
+
+- [x] Use ASAN with afl and read the output
+	- add to PATH llvm-symbolizer and then run the output with: 	 ASAN_OPTIONS=symbolize=1 ./a.out
+- [x] read the tests in crashes folder and try to find their contents
+- [x] MACKE example doesn't run properly with afl
+- [x] make scripts to produce code coverage results from afl-fuzz test cases
+
+Task list (08.09.2016)
+
+- [x] Repeat previous week's tasks
+- [x] Check also the simple example that crashes from MACKE
+- [x] Look on Google Scholar for any papers that compare symbolic execution and AFL
+
 Task list (30.08.2016)
 
-- [ ] Get the coverage from coreutils fuzzed with AFL
-	- check for the crashes + hangs
-	- compute also the percentage of coverage
+- [x] Get the coverage from coreutils fuzzed with AFL
+	- check for the crashes + hangs:
+		- afl-cov checks only the queue folder
+	- compute also the percentage of coverage:
+		-  gcc -fpreprocessed -dD -E -P SRC_FILE--> removes new lines and comments
 	
-- [ ] Run the regexp.c program from KLEE and fuzz it with AFL
+- [x] Run the Regexp.c program from KLEE and fuzz it with AFL
 	- Check if it finds crashes like KLEE
 	
 Task list (25.08.2016)
