@@ -1,5 +1,16 @@
 # My Tasks
 
+Task list (04.11.2016)
+
+- [x] Install MACKE and KLEE with *targeted search*
+- [ ] Use MACKE to get the list of functions of a program (A)
+- [x] Compile twice with afl-clang
+	- to .bc file
+	- to binary
+- [x] Use afl-fuzz on the binary, run afl-cov and get func_coverage (B) 
+- [x] and then run with KLEE the .bc file with targeted search with functions C=(A-B)
+- [ ] make a script to automate the whole process
+
 Task list (27.10.2016)
 
 - [x] Use *afl-clang* to compile Regexp.c (KLEE-examples) and 
