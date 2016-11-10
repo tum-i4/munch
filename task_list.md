@@ -1,5 +1,13 @@
 # My Tasks
 
+Task list (11.11.2016)
+
+- Modify the searching strategy in MACKE in order to continue the searching after it reached the `target`.
+	- Probably the whole implementation of Ld2t should change to distinguish the nodes of the call graph into 3 categories:
+		- nodes that will never reach the target 
+		- nodes that can reach the target (including the target itself)
+		- nodes that were reached after reaching the target 	 	
+
 Task list (04.11.2016)
 
 - [x] Install MACKE and KLEE with *targeted search*
