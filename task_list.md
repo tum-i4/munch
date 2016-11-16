@@ -1,5 +1,21 @@
 # My Tasks
 
+Task list (17.11.2016)
+
+- In `ExecutionState.h` add a boolean flag: *targetFunc*
+
+- In `ExecutionState.cpp`:
+
+	- In the constructor -> initialize it to false
+	- In the Copy Constructor -> assign the previous value : state.flag
+	- In merge() -> handle the flag accordingly
+	- In branch() -> handle the flag accordingly
+	- In pushFrame() -> check: if functionName == myTarget then set the boolean flag to true
+
+- Check how to use the command line values in LLVM in multiple files
+
+- When KLEE starts add option to disable inlining
+
 Task list (11.11.2016)
 
 - Modify the searching strategy in MACKE in order to continue the searching after it reached the `target`.
