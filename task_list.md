@@ -1,5 +1,14 @@
 # My Tasks
 
+Task list (24.11.2016)
+
+- [x] Check that our implementation for targeted-search works well
+- [x] write a script for the whole process 
+	- get all functions of a program in topological order
+	- get a list for functions not covered by afl and keep the list topologically ordered
+	- after each run of KLEE remove also the functions that were covered by the current run
+	- probably will need to add a timeout in case of big programs where not all functions can be covered
+	 
 Task list (17.11.2016)
 
 - In `ExecutionState.h` add a boolean flag: *targetFunc*
@@ -12,9 +21,13 @@ Task list (17.11.2016)
 	- In branch() -> handle the flag accordingly
 	- In pushFrame() -> check: if functionName == myTarget then set the boolean flag to true
 
-- Check how to use the command line values in LLVM in multiple files
+- Check how to use the command line values in LLVM in multiple files : save the value from the cl in a global variable
 
-- When KLEE starts add option to disable inlining
+- Run KLEE with option to disable inlining
+	
+	```
+	 $ klee --disable-inlining -search=ld2t -targeted-function=<func_name> <filename.bc> 
+	``` 
 
 Task list (11.11.2016)
 
