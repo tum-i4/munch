@@ -1,5 +1,64 @@
 # My Tasks
 
+Task list (17.11.2016)
+
+- In `ExecutionState.h` add a boolean flag: *targetFunc*
+
+- In `ExecutionState.cpp`:
+
+	- In the constructor -> initialize it to false
+	- In the Copy Constructor -> assign the previous value : state.flag
+	- In merge() -> handle the flag accordingly
+	- In branch() -> handle the flag accordingly
+	- In pushFrame() -> check: if functionName == myTarget then set the boolean flag to true
+
+- Check how to use the command line values in LLVM in multiple files
+
+- When KLEE starts add option to disable inlining
+
+Task list (11.11.2016)
+
+- Modify the searching strategy in MACKE in order to continue the searching after it reached the `target`.
+	- Probably the whole implementation of Ld2t should change to distinguish the nodes of the call graph into 3 categories:
+		- nodes that will never reach the target 
+		- nodes that can reach the target (including the target itself)
+		- nodes that were reached after reaching the target 	 	
+
+Task list (04.11.2016)
+
+- [x] Install MACKE and KLEE with *targeted search*
+- [x] Use MACKE to get the list of functions of a program (A)
+- [x] Compile twice with afl-clang
+	- to .bc file
+	- to binary
+- [x] Use afl-fuzz on the binary, run afl-cov and get func_coverage (B) 
+- [x] and then run with KLEE the .bc file with targeted search with functions C=(A-B)
+- [x] make a script to automate the whole process
+
+Task list (27.10.2016)
+
+- [x] Use *afl-clang* to compile Regexp.c (KLEE-examples) and 
+	- generate Regexp.bc file and run it with KLEE
+	- generate the instrumented binary and fuzz it with AFL
+	- the '-O3' option from the params of the compiler should be removed from the **afl-gcc.c** file in order to work properly
+	- Compilation command invoking afl-clang is now: 
+
+	 ```
+	 $ clang -emit-llvm -c <program_name>.c \
+	  	  -B path/to/as -no-integrated-as -g -funroll-loops -D__AFL_COMPILER=1
+	 ```
+	 or compile with AFL\_DONT\_OPTIMIZE=1
+	 
+	 - cannot make it run using **afl-clang-fast** - I get this error after running with KLEE:
+	 	
+	 	```
+	 	KLEE: WARNING: undefined reference to variable: \__afl\_area\_ptr
+		KLEE: WARNING: undefined reference to variable: \__afl\_prev\_loc
+		KLEE: ERROR: unable to load symbol(__afl_area_ptr) while initializing globals.
+		```		 	
+	 
+- [x] Run afl-cov on the results and create a script to find the functions that were covered
+	 
 Task list (20.10.2016)
 
 - [x] Try with AFL Thomas programs:
