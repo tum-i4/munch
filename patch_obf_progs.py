@@ -36,8 +36,8 @@ def main(argv):
     output_lines.append("int* a ;\n")
     
     for line in lines:
-        if "/*" in line:
-            continue
+        #if "/*" in line:
+        #    continue
         if struct > 0:
             struct -= 1
             continue
@@ -47,23 +47,23 @@ def main(argv):
             output_lines.append("  initialize_main (&argc, &argv);\n")
             output_lines.append("  int *a;\n")
             continue
-        if "extern int fclose" in line:
+        if line.startswith("extern int fclose"):
             continue
-        elif "extern void *fopen" in line:
+        elif line.startswith("extern void *fopen"):
             continue
-        elif "extern int fprintf(struct" in line:
+        elif line.startswith("extern int fprintf(struct"):
             continue
-        elif "extern unsigned long strtoul(char" in line:
+        elif line.startswith("extern unsigned long strtoul(char"):
             continue
-        elif "extern double strtod(char" in line:
+        elif line.startswith("extern double strtod(char"):
             continue
-        elif "extern long strtol(char" in line:
+        elif line.startswith("extern long strtol(char"):
             continue
-        elif "struct timeval" in line:
+        elif line.startswith("struct timeval"):
             struct = 3
-        elif "int main(int argc , char *argv[] )" in line:
-            if main == 0:
-                main = 1
+        #elif "int main(int argc , char *argv[] )" in line:
+        #    if main == 0:
+        #        main = 1
         elif "printf(\"You win!" in line:
             output_lines.append(line)
             output_lines.append("    printf(\"%d\", a[10]);\n")
