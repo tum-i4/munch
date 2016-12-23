@@ -26,12 +26,15 @@ def main(argv):
     output_lines = []
     output_lines.append("#include <getopt.h>\n")
     output_lines.append("#include <stdio.h>\n")
+    output_lines.append("#include <stdlib.h>\n")
     output_lines.append("#include <sys/types.h>\n")
     output_lines.append("#include <assert.h>\n")
     output_lines.append("#define NDEBUG 1\n")
     output_lines.append("#define SIZE 99999\n")
     output_lines.append("#undef initialize_main\n")
     output_lines.append("void initialize_main(int *argc, char ***argv) ;\n")
+    output_lines.append("int* a ;\n")
+    
     for line in lines:
         if "/*" in line:
             continue
@@ -48,7 +51,13 @@ def main(argv):
             continue
         elif "extern void *fopen" in line:
             continue
-        if "extern int fprintf(struct" in line:
+        elif "extern int fprintf(struct" in line:
+            continue
+        elif "extern unsigned long strtoul(char" in line:
+            continue
+        elif "extern double strtod(char" in line:
+            continue
+        elif "extern long strtol(char" in line:
             continue
         elif "struct timeval" in line:
             struct = 3
