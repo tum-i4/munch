@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os, sys
+import glob
 
 def main(argv):
 
@@ -25,14 +26,16 @@ def main(argv):
     #     os.makedirs(output_dir)
 
     # 2. patch the obfuscated program with the patch
-    for filename in os.listdir(obf_dir):
+    filelist = glob.glob(obf_dir+'/*.c')
+    for filename in filelist:
         if not filename.startswith('.' or '..'):
+            filename = os.path.basename(filename)
             print(filename)
             f = open(obf_dir+"/"+filename, "r+")
             lines = f.readlines()
             f.close()
 
-            output_file = filename[:-2] + "_afl.c"
+            output_file = obf_dir + filename[:-2] + "_afl.c"
             print("Output file: " + output_file)
             struct = 0
             main = 0
@@ -46,7 +49,6 @@ def main(argv):
             output_lines.append("#define SIZE 99999\n")
             output_lines.append("#undef initialize_main\n")
             output_lines.append("void initialize_main(int *argc, char ***argv) ;\n")
-            output_lines.append("int* a ;\n")
             
             for line in lines:
                 #if "/*" in line:
@@ -74,9 +76,9 @@ def main(argv):
                     continue
                 elif line.startswith("struct timeval"):
                     struct = 3
-                #elif "int main(int argc , char *argv[] )" in line:
-                #    if main == 0:
-                #        main = 1
+                elif line.startswith("int main(") and (";" not in line):
+                    if main == 0:
+                        main = 1
                 elif "printf(\"You win!" in line:
                     output_lines.append(line)
                     output_lines.append("    printf(\"%d\", a[10]);\n")
