@@ -69,18 +69,22 @@ def main(argv):
     args = ["/home/saahil/build/llvm/Release/bin/opt", "-load", "/home/saahil/git/macke-opt-llvm/bin/libMackeOpt.so", llvm_obj,
             "--listallfuncstopologic", "-disable-output"]
     result = subprocess.check_output(args)
+    result = str(result, 'utf-8')
     all_funcs_topologic = order_funcs_topologic(result)
     print("TOTAL FUNCS : ")
     print(len(all_funcs_topologic))
+    time.sleep(5)
 
     # run afl-fuzz
     pos = afl_binary.rfind('/')
     afl_out_dir=afl_binary[:pos+1]+"afl_results"
-    args = ["afl-fuzz", "-i", testcases, "-o", afl_out_dir, afl_binary]
+    args = ["afl-fuzz", "-i", testcases, "-o", afl_out_dir, afl_binary, "@@"]
     # take the progs args as given from command line
     # if sys.argv[5:]:
     #    args = args + sys.argv[5:]
 
+    print("Preparing to fuzz...")
+    time.sleep(3)
     proc = subprocess.Popen(args)
 
     time.sleep(fuzz_time)
@@ -92,6 +96,8 @@ def main(argv):
 
     # run KLEE with targeted search with the functions not covered by afl
     # be sure it's topologically sorted
+    print("Computing function coverage after fuzzing...")
+    time.sleep(3)
     uncovered_funcs = []
     for index in range(len(all_funcs_topologic)):
         if all_funcs_topologic[index] not in func_list_afl:
@@ -100,20 +106,20 @@ def main(argv):
     # save the list of covered and uncovered functions after fuzzing
     cov_funcs = afl_out_dir + "/covered_functions.txt"
     with open(cov_funcs, 'w+') as the_file:
-	the_file.write("%s\n" %len(func_list_afl))
-	for index in range(len(func_list_afl)):
-	    the_file.write("%s\n" %func_list_afl[index])
+        the_file.write("%s\n" %len(func_list_afl))
+        for index in range(len(func_list_afl)):
+            the_file.write("%s\n" %func_list_afl[index])
 
     uncov_funcs = afl_out_dir + "/uncovered_functions.txt"
     with open(uncov_funcs, 'w+') as the_file:
-	the_file.write("%s\n" %len(uncovered_funcs))
+        the_file.write("%s\n" %len(uncovered_funcs))
         for index in range(len(uncovered_funcs)):
-    	    the_file.write("%s\n" %uncovered_funcs[index])
+            the_file.write("%s\n" %uncovered_funcs[index])
     
     targ = "-targeted-function="
     func_dir = OrderedDict()
     for index in range(len(uncovered_funcs)):
-	func = uncovered_funcs[index]
+        func = uncovered_funcs[index]
         func_dir[func] = 0
 
     print(func_dir)
@@ -122,22 +128,24 @@ def main(argv):
     klee_cov_funcs = llvm_obj[:pos+1] + "covered_funcs.txt"
     klee_uncov_funcs = llvm_obj[:pos+1] + "uncovered_funcs.txt"
   
+    print("Preparing to symbolically execute...")
+    time.sleep(3)
     for key in func_dir:
-	print(key)
+        print(key)
         if func_dir[key] != 1:
-	    args = ["/home/saahil/repos/klee/Release+Asserts/bin/klee", "--posix-runtime", "--libc=uclibc", "--only-output-states-covering-new", "--disable-inlining", "--optimize", "--max-time=60", "--watchdog", "-search=ld2t", targ+key, llvm_obj, "--sym-arg 20", "--sym-stdin 100"]
-	    subprocess.Popen(args)
+            args = ["/home/saahil/repos/klee/Release+Asserts/bin/klee", "--posix-runtime", "--libc=uclibc", "--only-output-states-covering-new", "--disable-inlining", "--optimize", "--max-time=60", "--watchdog", "-search=ld2t", targ+key, llvm_obj, "--sym-arg 20", "--sym-files 1 100"]
+            subprocess.Popen(args)
             time.sleep(65)
-	    klee_dir=llvm_obj[:pos+1]+"klee-last/run.istats"
-	    f = open(klee_dir, "r")
+            klee_dir=llvm_obj[:pos+1]+"klee-last/run.istats"
+            f = open(klee_dir, "r")
 
             for line in f:
                 if line[:4] == "cfn=":
                     covered_from_klee.add(line[4:-1])
 
-	    print("covered_from_klee:")
+            print("covered_from_klee:")
             print(covered_from_klee)
-	    for func in covered_from_klee:
+            for func in covered_from_klee:
                 if func in func_dir:
                     func_dir[func] = 1
     
@@ -145,11 +153,11 @@ def main(argv):
     cov_file = open(klee_cov_funcs, 'w+')
     uncov_file = open(klee_uncov_funcs, 'w+')
     for key in func_dir:
-	if func_dir[key] == 1:
-	    cov_file.write("%s\n" %key)
-	else:
-	    uncov_file.write("%s\n" %key)
-	    
+        if func_dir[key] == 1:
+            cov_file.write("%s\n" %key)
+        else:
+            uncov_file.write("%s\n" %key)
+      
 
     return 1
 
