@@ -122,38 +122,34 @@ def main(argv):
     klee_cov_funcs = llvm_obj[:pos+1] + "covered_funcs.txt"
     klee_uncov_funcs = llvm_obj[:pos+1] + "uncovered_funcs.txt"
   
-     
-    uncov_file = open(klee_uncov_funcs, 'w+')
-    for key in func_dir:
-	uncov_file.write("%s\n" %func)
-    uncov_file.close()
-
     for key in func_dir:
 	print(key)
         if func_dir[key] != 1:
-	    args = ["/home/saahil/repos/klee/Release+Asserts/bin/klee", "--posix-runtime", "--libc=uclibc", "--only-output-states-covering-new", "--disable-inlining", "--optimize", "--max-time=120", "-search=ld2t", targ+key, llvm_obj, "--sym-arg 20", "--sym-stdin 100"]
+	    args = ["/home/saahil/repos/klee/Release+Asserts/bin/klee", "--posix-runtime", "--libc=uclibc", "--only-output-states-covering-new", "--disable-inlining", "--optimize", "--max-time=60", "--watchdog", "-search=ld2t", targ+key, llvm_obj, "--sym-arg 20", "--sym-stdin 100"]
 	    subprocess.Popen(args)
-            time.sleep(130)
+            time.sleep(65)
 	    klee_dir=llvm_obj[:pos+1]+"klee-last/run.istats"
 	    f = open(klee_dir, "r")
 
-          #  covered_from_klee = set()
             for line in f:
                 if line[:4] == "cfn=":
                     covered_from_klee.add(line[4:-1])
 
 	    print("covered_from_klee:")
             print(covered_from_klee)
-	    cov_file = open(klee_cov_funcs, 'w+')
-#	    uncov_file = open(klee_uncov_funcs, 'w+')
 	    for func in covered_from_klee:
                 if func in func_dir:
                     func_dir[func] = 1
-		    cov_file.write("%s\n" %func)
-#		else:
-#		    uncov_file.write("%s\n" %func)
-	    cov_file.close()
-            print(func_dir)
+    
+    print(func_dir)
+    cov_file = open(klee_cov_funcs, 'w+')
+    uncov_file = open(klee_uncov_funcs, 'w+')
+    for key in func_dir:
+	if func_dir[key] == 1:
+	    cov_file.write("%s\n" %key)
+	else:
+	    uncov_file.write("%s\n" %key)
+	    
 
     return 1
 
