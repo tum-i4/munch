@@ -120,6 +120,14 @@ def main(argv):
     covered_from_klee = set()
     pos = llvm_obj.rfind('/')
     klee_cov_funcs = llvm_obj[:pos+1] + "covered_funcs.txt"
+    klee_uncov_funcs = llvm_obj[:pos+1] + "uncovered_funcs.txt"
+  
+     
+    uncov_file = open(klee_uncov_funcs, 'w+')
+    for key in func_dir:
+	uncov_file.write("%s\n" %func)
+    uncov_file.close()
+
     for key in func_dir:
 	print(key)
         if func_dir[key] != 1:
@@ -136,11 +144,14 @@ def main(argv):
 
 	    print("covered_from_klee:")
             print(covered_from_klee)
-	    cov_file = open(klee_cov_funcs, 'a')
+	    cov_file = open(klee_cov_funcs, 'w+')
+#	    uncov_file = open(klee_uncov_funcs, 'w+')
 	    for func in covered_from_klee:
                 if func in func_dir:
                     func_dir[func] = 1
 		    cov_file.write("%s\n" %func)
+#		else:
+#		    uncov_file.write("%s\n" %func)
 	    cov_file.close()
             print(func_dir)
 
