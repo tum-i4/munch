@@ -1,71 +1,71 @@
-import os, sys
-import subprocess, time
-import glob
+from helper import get_flat_topology
+import argparse
+from os import path
+from glob import glob
 
 
-def order_funcs_topologic(list_of_functions):
-    func = ""
-    l = []
-    for c in list_of_functions:
-        if c not in "[],\n\"":
-            if (c == ' ') and (func != ""):
-                l.append(func)
-                func = ""
-            else:
-                if c != ' ':
-                    func += c
-    if func != "":
-        l.append(func)
-
-    l.reverse()
-    print(l)
-    return l
-
-
-def main(argv):
-    try:
-        llvm_obj = sys.argv[1]  # name of the program for klee
-    except IndexError:
-        print("Wrong number of command line args:", sys.exc_info()[0])
-        raise
-
+def main(bcfilename, verbose=False):
     # get a list of functions topologically ordered
-    args = ["/home/saahil/build/llvm/Release/bin/opt", "-load", "/home/saahil/git/macke-opt-llvm/bin/libMackeOpt.so",
-            llvm_obj,
-            "--listallfuncstopologic", "-disable-output"]
-    result = subprocess.check_output(args)
-    result = unicode(result, 'utf-8')
-    all_funcs_topologic = order_funcs_topologic(result)
-    print("TOTAL FUNCS : ")
-    print(len(all_funcs_topologic))
-    time.sleep(5)
+    all_funcs = set(get_flat_topology(bcfilename))
+    if verbose:
+        print("All functions:", sorted(all_funcs))
 
-    covered_from_klee = set()
-    pos = llvm_obj.rfind('/')
-    klee_cov_funcs = llvm_obj[:pos + 1] + "covered_funcs.txt"
-    klee_uncov_funcs = llvm_obj[:pos + 1] + "uncovered_funcs.txt"
+    # TODO: This silently assumes that all klee-out-* dirs are in the
+    # same folder as the .bc-file. Maybe add an additional argument?
+    for filename in glob(path.join(path.dirname(bcfilename), "klee-out-*")):
+        runistatsname = path.join(path.abspath(filename), "run.istats")
+        print(runistatsname)
+        with open(runistatsname) as runistats:
+            covered_from_klee = set(
+                line[len("cfn="):-1]
+                for line in runistats.readlines()
+                if line.startswith("cfn=")
+            )
 
-    for filename in glob.glob(llvm_obj[:pos + 1] + "klee-out-*"):
-    	klee_dir = os.path.abspath(filename) + "/run.istats"
-        print(klee_dir)
-        f = open(klee_dir, "r")
-        for line in f:
-            if line[:4] == "cfn=":
-        	covered_from_klee.add(line[4:-1])
+    # Remove all functions, that were added by KLEE
+    covered_from_klee &= all_funcs
 
-    print(len(covered_from_klee))
-    print(covered_from_klee)
-    cov_file = open(klee_cov_funcs, 'w+')
-    uncov_file = open(klee_uncov_funcs, 'w+')
-    for func in all_funcs_topologic:
-        if func in covered_from_klee:
-            cov_file.write("%s\n" % func)
-        else:
-            uncov_file.write("%s\n" % func)
+    if verbose:
+        print("Covered:", sorted(covered_from_klee))
+        print("Uncovered:", sorted(all_funcs - covered_from_klee))
 
-    return 1
+    print("KLEE covers {:d} out of {:d} total functions ({:.1%})".format(
+        len(covered_from_klee), len(all_funcs),
+        len(covered_from_klee) / len(all_funcs)))
+
+    klee_cov_funcs = path.join(path.dirname(bcfilename), "covered_funcs.txt")
+    klee_unc_funcs = path.join(path.dirname(bcfilename), "uncovered_funcs.txt")
+
+    # TODO Maybe order both files alphabetically?
+    with open(klee_cov_funcs, 'w+') as cov_file, open(klee_unc_funcs, 'w+') as unc_file:
+        for func in all_funcs:
+            if func in covered_from_klee:
+                cov_file.write("%s\n" % func)
+            else:
+                unc_file.write("%s\n" % func)
+
+    return 0
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    parser = argparse.ArgumentParser(
+        description="""\
+        Extract the achived line coverage from past KLEE runs.
+        """
+    )
+    parser.add_argument(
+        'bcfile',
+        metavar=".bc-file",
+        type=argparse.FileType('r'),
+        help="Bitcode file, that was analyzed with KLEE"
+    )
+    parser.add_argument(
+        "-v", "--verbose",
+        help="Increase output verbosity",
+        action="store_true"
+    )
+
+    args = parser.parse_args()
+
+    main(args.bcfile.name, args.verbose)
 

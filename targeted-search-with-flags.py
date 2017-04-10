@@ -1,6 +1,8 @@
 import os, sys
 import subprocess, time, signal
 from collections import OrderedDict
+from helper import order_funcs_topologic
+
 
 def run_afl_cov(prog, path_to_afl_results, code_dir):
     afl_out_res = path_to_afl_results
@@ -33,25 +35,6 @@ def run_afl_cov(prog, path_to_afl_results, code_dir):
     f_cov.close()
 
     return func_list
-
-
-def order_funcs_topologic(list_of_functions):
-    func = ""
-    l = []
-    for c in list_of_functions:
-        if c not in "[],\n\"":
-            if (c == ' ') and (func != ""):
-                l.append(func)
-                func = ""
-            else:
-                if c != ' ':
-                    func += c
-    if func != "":
-        l.append(func)
-
-    l.reverse()
-    print(l)
-    return l
 
 
 def main(argv):
