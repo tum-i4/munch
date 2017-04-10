@@ -27,13 +27,19 @@ def flatten_string_list(deepListOfStrings):
             flattened.extend(elem)
     return flattened
 
+"""
+Get a list of all functions inside the bitcodefile ordered topologically
+from main level down to bottom. SCCs are not marked explicitly.
+"""
+def get_flat_topology(bcfilename):
+    return flatten_string_list(read_all_funcs(bcfilename))
 
 """
 Get a list of all functions inside the bitcodefile ordered topologically
 from deep up to main level. SCCs are not marked explicitly.
 """
 def get_flat_inversed_topology(bcfilename):
-    return reversed(flatten_string_list(read_all_funcs(bcfilename)))
+    return reversed(get_flat_topology(bcfilename))
 
 
 def order_funcs_topologic(list_of_functions):
