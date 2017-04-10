@@ -1,6 +1,10 @@
+from os.path import expanduser
 import os, sys
 import subprocess, time
 import glob
+
+MYOPT = expanduser("~/build/llvm/Release/bin/opt")
+MYLIBMACKEOPT = expanduser("~/git/macke-opt-llvm/bin/libMackeOpt.so")
 
 
 def order_funcs_topologic(list_of_functions):
@@ -30,11 +34,10 @@ def main(argv):
         raise
 
     # get a list of functions topologically ordered
-    args = ["/home/saahil/build/llvm/Release/bin/opt", "-load", "/home/saahil/git/macke-opt-llvm/bin/libMackeOpt.so",
-            llvm_obj,
+    args = [MYOPT, "-load", MYLIBMACKEOPT, llvm_obj,
             "--listallfuncstopologic", "-disable-output"]
     result = subprocess.check_output(args)
-    result = unicode(result, 'utf-8')
+    result = str(result, 'utf-8')
     all_funcs_topologic = order_funcs_topologic(result)
     print("TOTAL FUNCS : ")
     print(len(all_funcs_topologic))
