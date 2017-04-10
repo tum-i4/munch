@@ -1,25 +1,15 @@
-from os.path import expanduser
-from helper import order_funcs_topologic
+from helper import get_flat_inversed_topology
 import argparse
 import os
-import subprocess, time
+import time
 import glob
-
-MYOPT = expanduser("~/build/llvm/Release/bin/opt")
-MYLIBMACKEOPT = expanduser("~/git/macke-opt-llvm/bin/libMackeOpt.so")
 
 
 def main(bcfilename):
     # get a list of functions topologically ordered
-    args = [MYOPT, "-load", MYLIBMACKEOPT, bcfilename,
-            "--listallfuncstopologic", "-disable-output"]
-    result = subprocess.check_output(args)
-    result = str(result, 'utf-8')
-    all_funcs_topologic = order_funcs_topologic(result)
+    all_funcs_topologic = list(get_flat_inversed_topology(bcfilename))
     print(all_funcs_topologic)
-    print("TOTAL FUNCS : ")
-    print(len(all_funcs_topologic))
-    time.sleep(5)
+    print("TOTAL FUNCS :", len(all_funcs_topologic))
 
     covered_from_klee = set()
     pos = bcfilename.rfind('/')
