@@ -46,12 +46,12 @@ def main(argv):
     klee_uncov_funcs = llvm_obj[:pos + 1] + "uncovered_funcs.txt"
 
     for filename in glob.glob(llvm_obj[:pos + 1] + "klee-out-*"):
-    	klee_dir = os.path.abspath(filename) + "/run.istats"
+        klee_dir = os.path.abspath(filename) + "/run.istats"
         print(klee_dir)
         f = open(klee_dir, "r")
         for line in f:
             if line[:4] == "cfn=":
-        	covered_from_klee.add(line[4:-1])
+                covered_from_klee.add(line[4:-1])
 
     print(len(covered_from_klee))
     print(covered_from_klee)
