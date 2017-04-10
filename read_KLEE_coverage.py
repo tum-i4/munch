@@ -1,6 +1,7 @@
 from os.path import expanduser
 from helper import order_funcs_topologic
-import os, sys
+import argparse
+import os
 import subprocess, time
 import glob
 
@@ -8,15 +9,9 @@ MYOPT = expanduser("~/build/llvm/Release/bin/opt")
 MYLIBMACKEOPT = expanduser("~/git/macke-opt-llvm/bin/libMackeOpt.so")
 
 
-def main(argv):
-    try:
-        llvm_obj = sys.argv[1]  # name of the program for klee
-    except IndexError:
-        print("Wrong number of command line args:", sys.exc_info()[0])
-        raise
-
+def main(bcfilename):
     # get a list of functions topologically ordered
-    args = [MYOPT, "-load", MYLIBMACKEOPT, llvm_obj,
+    args = [MYOPT, "-load", MYLIBMACKEOPT, bcfilename,
             "--listallfuncstopologic", "-disable-output"]
     result = subprocess.check_output(args)
     result = str(result, 'utf-8')
@@ -27,11 +22,11 @@ def main(argv):
     time.sleep(5)
 
     covered_from_klee = set()
-    pos = llvm_obj.rfind('/')
-    klee_cov_funcs = llvm_obj[:pos + 1] + "covered_funcs.txt"
-    klee_uncov_funcs = llvm_obj[:pos + 1] + "uncovered_funcs.txt"
+    pos = bcfilename.rfind('/')
+    klee_cov_funcs = bcfilename[:pos + 1] + "covered_funcs.txt"
+    klee_uncov_funcs = bcfilename[:pos + 1] + "uncovered_funcs.txt"
 
-    for filename in glob.glob(llvm_obj[:pos + 1] + "klee-out-*"):
+    for filename in glob.glob(bcfilename[:pos + 1] + "klee-out-*"):
         klee_dir = os.path.abspath(filename) + "/run.istats"
         print(klee_dir)
         f = open(klee_dir, "r")
@@ -53,5 +48,19 @@ def main(argv):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    parser = argparse.ArgumentParser(
+        description="""\
+        Extract the achived line coverage from past KLEE runs.
+        """
+    )
+    parser.add_argument(
+        'bcfile',
+        metavar=".bc-file",
+        type=argparse.FileType('r'),
+        help="Bitcode file, that was analyzed with KLEE"
+    )
+
+    args = parser.parse_args()
+
+    main(args.bcfile.name)
 
