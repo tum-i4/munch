@@ -2,8 +2,8 @@
 
 Task list (19.01.2017)
 
-- [ ] make a script to check the crashes folder after fuzzing the obfuscated progs and check how many of them find the "You win"
-- [ ] Targeted Search: Check inside tofuzz/virt/ folder and check if it finds multiple paths inside RandomFunc
+- [x] make a script to check the crashes folder after fuzzing the obfuscated progs and check how many of them find the "You win"
+- [x] Targeted Search: Check inside tofuzz/virt/ folder and check if it finds multiple paths inside RandomFunc
 	- Set target "RandomFunc"
 	- Run KLEE with targeted search for 15 mins
 	- Check how many paths inside RandomFunc are covered by KLEE 
