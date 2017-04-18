@@ -5,6 +5,8 @@ import json
 MYOPT = expanduser("~/build/llvm/Release/bin/opt")
 MYLIBMACKEOPT = expanduser("~/git/macke-opt-llvm/bin/libMackeOpt.so")
 
+MYKLEE = expanduser("/home/saahil/repos/after-search/Release+Asserts/bin/klee")
+
 """
 Reads a list of all functions in topological order
 """
@@ -14,6 +16,33 @@ def read_all_funcs(bcfilename):
     output = subprocess.check_output(popenargs)
     outjson = json.loads(output.decode("utf-8"))
     return outjson
+
+"""
+Returns a list with only called functions from the extracted call-graph of a program"
+"""
+def total_funcs_topologic(funcname, outjson, total_funcs ):
+    nested_dict = outjson.get(funcname)
+    if not nested_dict.get("isexternal"):
+        total_funcs.append(funcname)
+        for call in nested_dict.get("calls"):
+          #  print(call)
+            if call not in total_funcs:
+                total_funcs_topologic(call, outjson, total_funcs)
+
+"""
+Returns the list with all functions that are internal and called of a bitcode file. 
+"""
+
+def get_all_called_funcs(bcfilename):
+    total_funcs = []
+    popenargs = [MYOPT, "-load", MYLIBMACKEOPT, bcfilename,
+    "--extractcallgraph", "-disable-output"]
+    output = subprocess.check_output(popenargs)
+    outjson = json.loads(output.decode("utf-8"))
+
+    if outjson.get("main") != None:
+        total_funcs = total_funcs_topologic("main", outjson, [])
+    return total_funcs
 
 """
 Flattens nested lists into one single list
