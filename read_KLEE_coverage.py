@@ -4,9 +4,10 @@ from os import path
 from glob import glob
 
 
-def main(bcfilename, verbose=False):
+def main(bcfilename, verbose=False, store=False):
     # get a list of functions topologically ordered
     all_funcs = set(get_flat_topology(bcfilename))
+    all_funcs.discard("main")
     if verbose:
         print("All functions:", sorted(all_funcs))
 
@@ -36,13 +37,14 @@ def main(bcfilename, verbose=False):
     klee_cov_funcs = path.join(path.dirname(bcfilename), "covered_funcs.txt")
     klee_unc_funcs = path.join(path.dirname(bcfilename), "uncovered_funcs.txt")
 
-    # TODO Maybe order both files alphabetically?
-    with open(klee_cov_funcs, 'w+') as cov_file, open(klee_unc_funcs, 'w+') as unc_file:
-        for func in all_funcs:
-            if func in covered_from_klee:
-                cov_file.write("%s\n" % func)
-            else:
-                unc_file.write("%s\n" % func)
+    if store:
+        # TODO Maybe order both files alphabetically?
+        with open(klee_cov_funcs, 'w+') as cov_file, open(klee_unc_funcs, 'w+') as unc_file:
+            for func in all_funcs:
+                if func in covered_from_klee:
+                    cov_file.write("%s\n" % func)
+                else:
+                    unc_file.write("%s\n" % func)
 
     return 0
 
@@ -64,8 +66,13 @@ if __name__ == '__main__':
         help="Increase output verbosity",
         action="store_true"
     )
+    parser.add_argument(
+        "-s", "--store",
+        help="Store coverage information into .txt-files",
+        action="store_true"
+    )
 
     args = parser.parse_args()
 
-    main(args.bcfile.name, args.verbose)
+    main(args.bcfile.name, args.verbose, args.store)
 
