@@ -1,11 +1,15 @@
 import os, sys
 import subprocess, time
 from collections import OrderedDict
-
-sys.path.append("/home/saahil/vdc")
 import helper
 import argparse
 from os import path
+
+WHICH_KLEE = "klee22"
+AFL_FOLDER_NAME  = "afl_results"
+SEARCH_NAME = "sonar"
+TARGET_INFO = "-sonar-target=function-call -sonar-target-info="
+sys.path.append("/home/saahil/vdc")
 
 """ Returns afl function coverage """
 def run_afl_cov(prog, afl_out_res):
@@ -48,7 +52,7 @@ def main(argv):
     print("All functions:", all_funcs_topologic)
 
     pos = afl_binary.rfind('/')
-    afl_out_dir = afl_binary[:pos + 1] + "afl_results_1h"
+    afl_out_dir = afl_binary[:pos + 1] +AFL_FOLDER_NAME 
     func_list_afl = run_afl_cov(afl_binary, afl_out_dir)
     print("AFL func coverage")
     func_list_afl = set(func_list_afl)
@@ -78,14 +82,16 @@ def main(argv):
     uncov_file = open(klee_uncov_funcs, "w+")
     frontier_file = open(frontier_nodes, "w+")
 
-    # run KLEE after-search 1.3
+    targ = TARGET_INFO
+
+    # run selected version of KLEE
     for key in func_dir:
         if func_dir[key] != 1:
             print(key)
-            args = ["/home/saahil/repos/after-search/Release+Asserts/bin/klee", "--posix-runtime", "--libc=uclibc",
+            args = ["/home/saahil/repos/%s/Release+Asserts/bin/klee"%(WHICH_KLEE), "--posix-runtime", "--libc=uclibc",
                     "--only-output-states-covering-new",
-                    "--disable-inlining", "-output-dir=" + llvm_obj[:pos + 1] + "/klee-out-"+key, "--optimize", "--max-time=300", "--max-solver-time=15", "--watchdog",
-                    "-search=after-call", "--after-function="+key, llvm_obj, "--sym-args 1 3 50", "--sym-files 1 100",
+                    "--disable-inlining", "-output-dir=" + llvm_obj[:pos + 1] + "/klee-out-"+key, "--optimize", "--max-time=120", "--watchdog",
+                    "-search="+SEARCH_NAME, TARGET_INFO+key, llvm_obj, "--sym-args 1 3 50", "--sym-files 1 100",
                     "--sym-stdin 100"]
             try:
                 str_args = " ".join(args)
