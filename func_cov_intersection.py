@@ -8,6 +8,7 @@ def main(argv):
         klee_coverage_path = argv[0]
         afl_coverage_path = argv[1]
         after_search_coverage_path = argv[2]
+        # shorter_afl_coverage_path = argv[3]
         all_funcs_file = argv[3]
     except IndexError:
         print("Wrong number of command line args:", sys.exc_info()[0])
@@ -32,6 +33,8 @@ def main(argv):
     # set of Hybrid functions
     if os.path.isfile(after_search_coverage_path):
         after_search_cov_file = open(after_search_coverage_path, "r")
+        # if shorter_afl_cov_file != "None":
+        #     shorter_afl_cov_file = open(shorter_afl_cov_file, "r")
         hybrid_set = set()
     else:
         print("After search coverage file does not exist: %s"%(afl_coverage_path))
@@ -73,6 +76,8 @@ def main(argv):
     klee_afl_intersect = afl_set.intersection(klee_set)
     klee_hybrid_intersect = klee_set.intersection(hybrid_set)
     afl_hybrid_intersect = hybrid_set.intersection(afl_set)
+
+    all_intersect = klee_set.intersection(hybrid_set.intersection(afl_set))
     
     # Unique functions
     klee_only = klee_set.difference(hybrid_set) # klee_set - hybrid_set
@@ -87,6 +92,7 @@ def main(argv):
     print("KLEE+AFL: %d"%(len(klee_afl_intersect)))
     print("AFL+Hybrid: %d"%(len(afl_hybrid_intersect)))
     print("KLEE+Hybrid: %d"%(len(klee_hybrid_intersect)))
+    print("KLEE+AFL+Hybrid: %d"%(len(all_intersect)))
 
     print("\n")
     print("AFL only: %d"%(len(afl_only)))

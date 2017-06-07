@@ -4,12 +4,50 @@ from collections import OrderedDict
 import helper
 import argparse
 from os import path
+import json
+from pprint import pprint
 
-WHICH_KLEE = "klee22"
-AFL_FOLDER_NAME  = "afl_results"
-SEARCH_NAME = "sonar"
-TARGET_INFO = "-sonar-target=function-call -sonar-target-info="
+AFL_OBJECT = ""
+LLVM_OBJECT = ""
+WHICH_KLEE = ""
+AFL_FOLDER_NAME  = ""
+SEARCH_NAME = ""
+TARGET_INFO = ""
+SYM_STDIN = ""
+SYM_ARGS = ""
+SYM_FILES = ""
+FUNC_TIME = ""
+
 sys.path.append("/home/saahil/vdc")
+
+def print_config():
+    print("AFL_OBJECT: %s"%(AFL_OBJECT))
+    print("LLVM_OBJECT: %s"%(LLVM_OBJECT))
+    print("WHICH_KLEE: %s"%(WHICH_KLEE))
+    print("AFL_FOLDER_NAME: %s"%(AFL_FOLDER_NAME))
+    print("SEARCH_NAME: %s"%(SEARCH_NAME))
+    print("TARGET_INFO: %s"%(TARGET_INFO))
+    print("SYM_STDIN: %s SYM_ARGS: %s SYM_FILES: %s"%(SYM_STDIN, SYM_ARGS, SYM_FILES))
+    print("FUNC_TIME: %s"%(FUNC_TIME))
+
+""" Get configuration for after-search """
+def read_config(config_file):
+    json_file = open(config_file, "r")
+    conf = json.load(json_file)
+
+    global AFL_OBJECT, LLVM_OBJECT, WHICH_KLEE, AFL_FOLDER_NAME, SEARCH_NAME, TARGET_INFO, SYM_STDIN, SYM_ARGS, SYM_FILES, FUNC_TIME
+    AFL_OBJECT = conf['AFL_OBJECT']
+    LLVM_OBJECT = conf["LLVM_OBJECT"]
+    WHICH_KLEE = conf["WHICH_KLEE"]
+    AFL_FOLDER_NAME = conf["AFL_FOLDER_NAME"]
+    SEARCH_NAME = conf["SEARCH_NAME"]
+    TARGET_INFO = conf["TARGET_INFO"]
+    SYM_STDIN = conf["SYM_STDIN"]
+    SYM_ARGS = conf["SYM_ARGS"]
+    SYM_FILES = conf["SYM_FILES"]
+    FUNC_TIME = conf["FUNC_TIME"]
+
+    print_config()
 
 """ Returns afl function coverage """
 def run_afl_cov(prog, afl_out_res):
@@ -40,20 +78,24 @@ def run_klee_cov(prog, klee_out_res):
 
 def main(argv):
     try:
-        afl_binary = sys.argv[1]
-        llvm_obj = sys.argv[2]
+        config_file = sys.argv[1]
+        # afl_binary = sys.argv[1]
+        # llvm_obj = sys.argv[2]
+        # func_time = sys.argv[3]
     except IndexError:
         print("Wrong number of command line args:", sys.exc_info()[0])
         raise
 
+    read_config(config_file)
+
     # get a list of functions topologically ordered
-    all_funcs_topologic = helper.get_all_called_funcs(llvm_obj)
+    all_funcs_topologic = helper.get_all_called_funcs(LLVM_OBJECT)
     print(len(all_funcs_topologic))
     print("All functions:", all_funcs_topologic)
 
-    pos = afl_binary.rfind('/')
-    afl_out_dir = afl_binary[:pos + 1] +AFL_FOLDER_NAME 
-    func_list_afl = run_afl_cov(afl_binary, afl_out_dir)
+    pos = AFL_OBJECT.rfind('/')
+    afl_out_dir = AFL_OBJECT[:pos + 1] + AFL_FOLDER_NAME 
+    func_list_afl = run_afl_cov(AFL_OBJECT, afl_out_dir)
     print("AFL func coverage")
     func_list_afl = set(func_list_afl)
     print(len(func_list_afl))
@@ -73,10 +115,10 @@ def main(argv):
         func_dir[func] = 0
 
     covered_from_klee = set()
-    pos = llvm_obj.rfind('/')
-    klee_cov_funcs = llvm_obj[:pos + 1] + "covered_funcs.txt"
-    klee_uncov_funcs = llvm_obj[:pos + 1] + "uncovered_funcs.txt"
-    frontier_nodes = llvm_obj[:pos + 1] + "frontier_nodes.txt"
+    pos = LLVM_OBJECT.rfind('/')
+    klee_cov_funcs = LLVM_OBJECT[:pos + 1] + "covered_funcs.txt"
+    klee_uncov_funcs = LLVM_OBJECT[:pos + 1] + "uncovered_funcs.txt"
+    frontier_nodes = LLVM_OBJECT[:pos + 1] + "frontier_nodes.txt"
 
     cov_file = open(klee_cov_funcs, "w+")
     uncov_file = open(klee_uncov_funcs, "w+")
@@ -90,9 +132,9 @@ def main(argv):
             print(key)
             args = ["/home/saahil/repos/%s/Release+Asserts/bin/klee"%(WHICH_KLEE), "--posix-runtime", "--libc=uclibc",
                     "--only-output-states-covering-new",
-                    "--disable-inlining", "-output-dir=" + llvm_obj[:pos + 1] + "/klee-out-"+key, "--optimize", "--max-time=120", "--watchdog",
-                    "-search="+SEARCH_NAME, TARGET_INFO+key, llvm_obj, "--sym-args 1 3 50", "--sym-files 1 100",
-                    "--sym-stdin 100"]
+                    "--disable-inlining", "-output-dir=" + LLVM_OBJECT[:pos + 1] + "/klee-out-"+key, "--optimize", "--max-time="+FUNC_TIME, "--watchdog",
+                    "-search="+SEARCH_NAME, TARGET_INFO+key, LLVM_OBJECT, SYM_ARGS, SYM_FILES,
+                    SYM_STDIN]
             try:
                 str_args = " ".join(args)
                 print(str_args)
@@ -103,8 +145,8 @@ def main(argv):
                 print("Args of the child process: ", proc.args)
                 raise
 
-            run_istats = llvm_obj[:pos + 1] + "klee-out-"+key+"/run.istats"
-            covered_from_key = run_klee_cov(llvm_obj, run_istats)
+            run_istats = LLVM_OBJECT[:pos + 1] + "klee-out-"+key+"/run.istats"
+            covered_from_key = run_klee_cov(LLVM_OBJECT, run_istats)
             
             frontier_file.write("%s:\n"%(key))
             for c in covered_from_key:

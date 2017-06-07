@@ -5,7 +5,7 @@ import json
 MYOPT = expanduser("~/build/llvm/Release/bin/opt")
 MYLIBMACKEOPT = expanduser("~/git/macke-opt-llvm/bin/libMackeOpt.so")
 
-MYKLEE = expanduser("/home/saahil/repos/after-search/Release+Asserts/bin/klee")
+MYKLEE = expanduser("/home/saahil/repos/klee22/Release+Asserts/bin/klee")
 
 """
 Reads a list of all functions in topological order
@@ -28,6 +28,7 @@ def total_funcs_topologic(funcname, outjson, total_funcs ):
           #  print(call)
             if call not in total_funcs:
                 total_funcs_topologic(call, outjson, total_funcs)
+    return total_funcs
 
 """
 Returns the list with all functions that are internal and called of a bitcode file. 
