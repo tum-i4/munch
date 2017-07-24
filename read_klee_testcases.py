@@ -77,7 +77,7 @@ def get_full_arg(o):
 def get_full_file(o):
     name = o[0]
     size = int(o[1])
-    data = o[2]
+    data = o[2].split("\\x0")[0]
     return name, size, data
 
 def get_full_file_stat(o):
@@ -129,6 +129,8 @@ def write_testcase_file(testname, objects, out_folder):
             print("Invalid type '%s' read. Ending in panic"%(type))
             sys.exit(-1)
 
+    if not os.path.isdir(out_folder):
+        os.system("mkdir %s"%(out_folder))
     write_args_to_file(testname, command_args_objects, out_folder)
     write_files_to_file(testname, file_objects, out_folder)
 
@@ -145,19 +147,23 @@ def process_file(ktest_filename):
 
 def process_klee_out(klee_out_name, out_folder):
     global TESTCASE_I
+    print("Reading all klee-out-* folders in %s"%(klee_out_name))
     for t in glob.glob("%s/*.ktest"%(klee_out_name)):
         meta, objects = process_file(t)
         write_testcase_file("test%d"%(TESTCASE_I), objects, out_folder)
         TESTCASE_I += 1
 
 def process_all_klee_outs(parent_dir, out_folder):
-    print("Reading all klee-out-* folders in %s"%(parent_dir))
     for f in glob.glob("%s/klee-out-*/"%(parent_dir)):
         print("Reading KLEE testcases from: %s"%(f))
         process_klee_out(f, out_folder)
 
-def main(parent_dir, out_folder):
-    process_all_klee_outs(parent_dir, out_folder)
+def main(parent_dir, out_dir):
+    ktest_list = glob.glob("%s/*.ktest"%(parent_dir))
+    if not ktest_list:
+        process_all_klee_outs(parent_dir, out_dir)
+    else:
+        process_klee_out(parent_dir, out_dir)
 
 if __name__=="__main__":
     if len(sys.argv)==3:
