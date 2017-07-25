@@ -23,7 +23,7 @@ def read_config(config_file):
     GCOV_DIR = conf["GCOV_DIR"]
     LLVM_OPT = conf["LLVM_OPT"]
     LIB_MACKEOPT = conf["LIB_MACKEOPT"]
-    AFL_BINARY_FLAGS = conf["AFL_BINARY_FLAGS"]
+    AFL_BINARY_ARGS = conf["AFL_BINARY_ARGS"]
 
 def run_afl_cov(prog, path_to_afl_results, code_dir):
     afl_out_res = path_to_afl_results
