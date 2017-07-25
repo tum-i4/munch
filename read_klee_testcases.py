@@ -57,6 +57,10 @@ def get_object_type(o):
         return "file"
     elif name_line.endswith("-data-stat"):
         return "file-stat"
+    elif name_line.startswith("stdin"):
+        return "stdin"
+    elif name_line.startswith("stdin-stat"):
+        return "stdin-stat"
     elif name_line.startswith("model_version"):
         return "model"
 
@@ -74,10 +78,16 @@ def get_full_arg(o):
     data = o[2].split("\\x")[0]
     return name, size, data
 
+def get_full_stdin(o):
+    return get_full_arg(o)
+
+def get_full_stdin_stat(o):
+    return get_full_arg(o)
+
 def get_full_file(o):
     name = o[0]
     size = int(o[1])
-    data = o[2].split("\\x0")[0]
+    data = o[2].split("\\x")[0]
     return name, size, data
 
 def get_full_file_stat(o):
@@ -86,10 +96,30 @@ def get_full_file_stat(o):
 def get_full_model_version(o):
     return get_n_args(o)
 
-def write_files_to_file(testname, objects, out_folder):
-    if not os.path.isdir("%s/files"%(out_folder)):
-        os.system("mkdir %s/files"%(out_folder))
+def write_stdin_to_file(testname, objects, out_folder):
+    o_with_content = []
     for o in objects:
+        if not o[2]=="":
+            o_with_content.append(o)
+    if o_with_content:
+        if not os.path.isdir("%s/stdin"%(out_folder)):
+            os.system("mkdir %s/stdin"%(out_folder))
+    for o in o_with_content:
+        if o[2]=="":
+            continue
+        testcase = open("%s/stdin/%s.%s.txt"%(out_folder, testname, o[0]), "w")
+        testcase.write(o[2])
+        testcase.close()
+
+def write_files_to_file(testname, objects, out_folder):
+    o_with_content = []
+    for o in objects:
+        if not o[2]=="":
+            o_with_content.append(o)
+    if o_with_content:
+        if not os.path.isdir("%s/files"%(out_folder)):
+            os.system("mkdir %s/files"%(out_folder))
+    for o in o_with_content:
         if o[2]=="":
             continue
         testcase = open("%s/files/%s.%s.txt"%(out_folder, testname, o[0]), "w")
@@ -110,6 +140,7 @@ def write_args_to_file(testname, objects, out_folder):
 def write_testcase_file(testname, objects, out_folder):
     command_args_objects = []
     file_objects = []
+    stdin_objects = []
 
     for o in objects:
         type = get_object_type(o)
@@ -123,6 +154,11 @@ def write_testcase_file(testname, objects, out_folder):
             file_objects.append([name, size, data])
         elif type=="file-stat":
             name, size, data = get_full_file_stat(o)
+        elif type=="stdin":
+            name, size, data = get_full_stdin(o)
+            stdin_objects.append([name, size, data])
+        elif type=="stdin-stat":
+            name, size, data = get_full_stdin_stat(o)
         elif type=="model":
             name, size, data = get_full_model_version(o)
         else:
@@ -133,6 +169,7 @@ def write_testcase_file(testname, objects, out_folder):
         os.system("mkdir %s"%(out_folder))
     write_args_to_file(testname, command_args_objects, out_folder)
     write_files_to_file(testname, file_objects, out_folder)
+    write_stdin_to_file(testname, stdin_objects, out_folder)
 
 def process_file(ktest_filename):
     # print(ktest_filename)
@@ -147,15 +184,15 @@ def process_file(ktest_filename):
 
 def process_klee_out(klee_out_name, out_folder):
     global TESTCASE_I
-    print("Reading all klee-out-* folders in %s"%(klee_out_name))
+    print("Reading all ktest files in %s"%(klee_out_name))
     for t in glob.glob("%s/*.ktest"%(klee_out_name)):
         meta, objects = process_file(t)
         write_testcase_file("test%d"%(TESTCASE_I), objects, out_folder)
         TESTCASE_I += 1
 
 def process_all_klee_outs(parent_dir, out_folder):
+    print("Reading all klee-out-* from: %s"%(parent_dir))
     for f in glob.glob("%s/klee-out-*/"%(parent_dir)):
-        print("Reading KLEE testcases from: %s"%(f))
         process_klee_out(f, out_folder)
 
 def main(parent_dir, out_dir):
