@@ -12,6 +12,7 @@ LLVM_OPT = ""
 LIB_MACKEOPT = ""
 AFL_OUT = ""
 AFL_BINARY_ARGS = ""
+READ_FROM_FILE = ""
 
 def read_config(config_file):
     json_file = open(config_file, "r")
@@ -24,11 +25,12 @@ def read_config(config_file):
     LLVM_OPT = conf["LLVM_OPT"]
     LIB_MACKEOPT = conf["LIB_MACKEOPT"]
     AFL_BINARY_ARGS = conf["AFL_BINARY_ARGS"]
+    READ_FROM_FILE = ""
 
 def run_afl_cov(prog, path_to_afl_results, code_dir):
     afl_out_res = path_to_afl_results
     output = afl_out_res + "/" + "afl_cov.txt"
-    command = "./" + code_dir 
+    command = '"./' + code_dir + READ_FROM_FILE + ' AFL_FILE"'
     print(command)
     pos = code_dir.rfind('/')
     code_dir = code_dir[:pos+1]
@@ -102,18 +104,23 @@ def main(argv):
     # run afl-fuzz
     pos = AFL_BINARY.rfind('/')
     afl_out_dir=AFL_BINARY[:pos+1]+"afl_results_2ndround"
-    args = ["afl-fuzz", "-i", TESTCASES, "-o", AFL_OUT, AFL_BINARY]
-    # take the progs args as given from command line
-    # if sys.argv[5:]:
-    #    args = args + sys.argv[5:]
+    if not os.path.isdir(AFL_OUT):
+        args = ["afl-fuzz", "-i", TESTCASES, "-o", AFL_OUT, AFL_BINARY, AFL_BINARY_ARGS]
+        # take the progs args as given from command line
+        # if sys.argv[5:]:
+        #    args = args + sys.argv[5:]
 
-    print("Preparing to fuzz...")
-    time.sleep(3)
-    proc = subprocess.Popen(args)
+        print("Preparing to fuzz...")
+        time.sleep(3)
+        proc = subprocess.Popen(args)
 
-    time.sleep(FUZZ_TIME)
-    os.kill(proc.pid, signal.SIGKILL)
-
+        time.sleep(FUZZ_TIME)
+        os.kill(proc.pid, signal.SIGKILL)
+    else:
+        print("That directory already contains past fuzzing results.")
+        print("Continuing with coverage calculation...")
+        time.sleep(3)
+    
     func_list_afl = run_afl_cov(AFL_BINARY, AFL_OUT, GCOV_DIR)
     print("AFL LIST: ")
     print(len(func_list_afl))
