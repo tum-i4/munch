@@ -4,6 +4,26 @@ import glob
 KLEE_BIN_PATH = "/home/saahil/build/klee/Release+Asserts/bin/"
 TESTCASE_I = 0
 
+def read_text(filename):
+    f = open(filename, "r")
+    return f.readline()
+
+def combine_args_and_stdin(out_folder):
+    if (os.path.isdir(out_folder+"/args" and os.path.isdir(out_folder+"/stdin")):
+        if not os.path.isdir(out_folder+"/combined"):
+            os.system("mkdir %s/combined"%(out_folder))
+        for f in glob.glob(out_folder+"/args/*.txt"):
+            stdin_path = out_folder+"/stdin/"+os.path.basename(f)[:-3]+"stdin.txt"
+            if os.path.exists(stdin_path):
+                combined_text = read_text(f) + " " + read_text(stdin_path)
+            else:
+                combined_text = read_text(f)
+            combined_textfile = open(out_folder+"/combined/"+os.path.basename(f), "w")
+            combined_textfile.write(combined_text)
+            combined_textfile.close()
+    else:
+        print("Nothing to combine at %s"%(out_folder))
+
 def read_ktest_to_text(ktest_filename):
     if not os.path.exists(ktest_filename):
         print("ERROR: Path to the ktest file does not exist.")
@@ -201,6 +221,7 @@ def main(parent_dir, out_dir):
         process_all_klee_outs(parent_dir, out_dir)
     else:
         process_klee_out(parent_dir, out_dir)
+    combine_args_and_stdin(out_dir)
 
 if __name__=="__main__":
     if len(sys.argv)==3:
