@@ -13,6 +13,7 @@ LIB_MACKEOPT = ""
 AFL_OUT = ""
 AFL_BINARY_ARGS = ""
 READ_FROM_FILE = ""
+AFL_RESULTS_FOLDER = ""
 
 def read_config(config_file):
     json_file = open(config_file, "r")
@@ -26,6 +27,7 @@ def read_config(config_file):
     LIB_MACKEOPT = conf["LIB_MACKEOPT"]
     AFL_BINARY_ARGS = conf["AFL_BINARY_ARGS"]
     READ_FROM_FILE = ""
+    AFL_RESULTS_FOLDER = conf["AFL_RESULTS_FOLDER"]
 
 def run_afl_cov(prog, path_to_afl_results, code_dir):
     afl_out_res = path_to_afl_results
@@ -85,7 +87,7 @@ def main(argv):
         config_file = sys.argv[1]
         TESTCASES = sys.argv[2]  # testcases for the program used by afl-fuzz
         FUZZ_TIME = int(sys.argv[3])  # time to run afl-fuzzer
-        AFL_OUT = sys.argv[4]
+        # AFL_OUT = sys.argv[4]
     except IndexError:
         print("Wrong number of command line args:", sys.exc_info()[0])
         raise
@@ -103,7 +105,7 @@ def main(argv):
 
     # run afl-fuzz
     pos = AFL_BINARY.rfind('/')
-    afl_out_dir=AFL_BINARY[:pos+1]+"afl_results_2ndround"
+    AFL_OUT=AFL_BINARY[:pos+1]+AFL_RESULTS_FOLDER
     if not os.path.isdir(AFL_OUT):
         args = ["afl-fuzz", "-i", TESTCASES, "-o", AFL_OUT, AFL_BINARY, AFL_BINARY_ARGS]
         # take the progs args as given from command line
