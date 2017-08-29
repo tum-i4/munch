@@ -19,7 +19,7 @@ def read_config(config_file):
     json_file = open(config_file, "r")
     conf = json.load(json_file)
 
-    global AFL_BINARY, LLVM_OBJ, GCOV_DIR, LLVM_OPT, LIB_MACKEOPT, AFL_BINARY_ARGS
+    global AFL_BINARY, LLVM_OBJ, GCOV_DIR, LLVM_OPT, LIB_MACKEOPT, AFL_BINARY_ARGS, AFL_RESULTS_FOLDER
     AFL_BINARY = conf["AFL_BINARY"]
     LLVM_OBJ = conf["LLVM_OBJ"]
     GCOV_DIR = conf["GCOV_DIR"]
