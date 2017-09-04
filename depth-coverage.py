@@ -6,6 +6,10 @@ from os import path
 from pprint import pprint
 import subprocess
 from itertools import cycle
+import helper
+import essentials as es
+import sys
+import fuzz_with_afl, read_KLEE_coverage
 
 def calc_distance_to_main(callgraph):
     all_funcs = []
@@ -38,10 +42,12 @@ def calc_distance_to_main(callgraph):
 def read_coverage(kleecovered_f, aflcovered_f):
     if not kleecovered_f:
         klee_file = None
+        print("Not reading KLEE coverage.")
     else:
         klee_file = open(kleecovered_f, 'r')
     if not aflcovered_f:
         afl_file = None
+        print("Not reading AFL coverage.")
     else:
         afl_file = open(aflcovered_f, 'r')
 
@@ -61,65 +67,58 @@ def read_coverage(kleecovered_f, aflcovered_f):
     return covered
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Calculate call-graph depth-wise"
-                    "function coverage"
-    )
-    parser.add_argument(
-        "bitcode",
-        help="bitcode file compiled for KLEE")
-    parser.add_argument(
-        "llvmopt",
-        help="The llvm opt binary to be used")
-    parser.add_argument(
-        "libmackeopt",
-        help="Macke optllvm shared library for aggregation functions")
-    parser.add_argument(
-        "outputtxt",
-        help="Write the output to this file")
-    parser.add_argument(
-        "kleecovered",
-        help="textfile listing all covered functions by KLEE")
-    parser.add_argument(
-        "aflcovered",
-        help="textfile listing all covered functions AFL")
+    try:
+        config_file = sys.argv[1]
+        outputtxt = sys.argv[2]
+    except IndexError:
+        print("Wrong number of command line ", sys.exc_info()[0])
+        raise
+    
+    helper.read_config(config_file)
+    
+    bitcode = es.LLVM_OBJ
+    llvmopt = es.LLVM_OPT
+    libmackeopt = es.LIB_MACKEOPT
+    kleecovered = path.dirname(es.LLVM_OBJ)+"/covered_funcs.txt"
+    aflcovered = path.dirname(es.AFL_BINARY)+"/"+es.AFL_RESULTS_FOLDER+"/covered_functions.txt"
 
-    args = parser.parse_args()
-
-    if not args.bitcode.endswith(".bc"):
+    if not bitcode.endswith(".bc"):
         print("ERROR: KLEE compiled file should have a .bc extension")
-    if not path.isfile(args.llvmopt):
-        print("ERROR: llvmopt loader not found: %s"%args.llvmopt)
-    if not path.isfile(args.libmackeopt):
-        print("ERROR: Macke optllvm library not found: %s"%args.libmackeopt)
-    if not args.outputtxt.endswith(".txt"):
-        print("ERROR: Output textfile should have .txt extension: %s"%args.outputtxt)
+    if not path.isfile(llvmopt):
+        print("ERROR: llvmopt loader not found: %s"%llvmopt)
+    if not path.isfile(libmackeopt):
+        print("ERROR: Macke optllvm library not found: %s"%libmackeopt)
+    if not outputtxt.endswith(".txt"):
+        print("ERROR: Output textfile should have .txt extension: %s"%outputtxt)
         output_to_file = False
-    elif not path.isdir(path.dirname(args.outputtxt)):
-        print("ERROR: Output textfile path does not exist: %s"%args.outputtxt)
+    elif not path.isdir(path.dirname(outputtxt)):
+        print("ERROR: Output textfile path does not exist: %s"%outputtxt)
         output_to_file = False
     else:
         output_to_file = True
-    if not (path.isfile(args.kleecovered) or args.kleecovered=="None"):
-        print("ERROR: wrong KLEE coverage file - covered: %s"%args.kleecovered)
-    if not (path.isfile(args.aflcovered)or args.aflcovered=="None"):
-        print("ERROR: wrong AFL coverage file - covered: %s"%args.aflcovered)
+
+    if not path.isfile(kleecovered) and kleecovered!="None":
+        print("ERROR: wrong KLEE coverage file: %s\nGenerating now..."%kleecovered)
+        read_KLEE_coverage.main(bitcode, verbose=False, store=True)
+    if not path.isfile(aflcovered) and aflcovered!="None":
+        print("ERROR: wrong AFL coverage file: %s\nGenerating now..."%aflcovered)
+        fuzz_with_afl.run_afl_cov(es.AFL_BINARY, path.dirname(es.AFL_BINARY)+"/"+es.AFL_RESULTS_FOLDER, es.GCOV_DIR)
 
     callgraph = json.loads(subprocess.check_output([
-                        args.llvmopt, "-load", args.libmackeopt,
-                        "-extractcallgraph", args.bitcode,
+                        llvmopt, "-load", libmackeopt,
+                        "-extractcallgraph", bitcode,
                         "-disable-output"]).decode("utf-8"))
     all_funcs, distancedict = calc_distance_to_main(callgraph)
 
     print("Total functions discovered in connected graph: %d"%(len(all_funcs)))
-    if args.kleecovered=="None":
+    if kleecovered=="None":
         kleecovered_f = None
     else:
-        kleecovered_f = args.kleecovered
-    if args.aflcovered=="None":
+        kleecovered_f = kleecovered
+    if aflcovered=="None":
         aflcovered_f = None
     else:
-        aflcovered_f = args.aflcovered
+        aflcovered_f = aflcovered
 
     covered = read_coverage(kleecovered_f, aflcovered_f)
 
@@ -145,7 +144,7 @@ def main():
         print("%10d|%10d"%(len(depthdict[d][0]), len(depthdict[d][0]) + len(depthdict[d][1])))
 
     if output_to_file:
-        outfile = open(args.outputtxt, "w+")
+        outfile = open(outputtxt, "w+")
         pprint(depthdict, outfile)
 
 if __name__=='__main__':

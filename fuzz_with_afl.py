@@ -23,7 +23,7 @@ def run_afl_cov(prog, path_to_afl_results, code_dir):
     f_cov = open(filename, "r")
     next(f_cov)
 
-    write_func = cov_dir  + "afl_func_cov.txt"
+    write_func = afl_out_res + "/covered_functions.txt"
     f = open(write_func, "w+")
 
     func_list = []
@@ -100,15 +100,15 @@ def main(argv):
         print("Continuing with coverage calculation...")
         time.sleep(1)
     
+    # run KLEE with targeted search with the functions not covered by afl
+    # be sure it's topologically sorted
+    print("Computing function coverage after fuzzing...")
+    time.sleep(2)
     func_list_afl = run_afl_cov(es.AFL_BINARY, AFL_OUT, es.GCOV_DIR)
     print("AFL LIST: ")
     print(len(func_list_afl))
     print(func_list_afl)
 
-    # run KLEE with targeted search with the functions not covered by afl
-    # be sure it's topologically sorted
-    print("Computing function coverage after fuzzing...")
-    time.sleep(3)
     uncovered_funcs = []
     for index in range(len(all_funcs_topologic)):
         if all_funcs_topologic[index] not in func_list_afl:
@@ -119,12 +119,13 @@ def main(argv):
     print(uncovered_funcs)
 
     # save the list of covered and uncovered functions after fuzzing
+    """
     cov_funcs = AFL_OUT + "/covered_functions.txt"
     with open(cov_funcs, 'w+') as the_file:
         the_file.write("%s\n" %len(func_list_afl))
         for index in range(len(func_list_afl)):
             the_file.write("%s\n" %func_list_afl[index])
-
+    """
     uncov_funcs = AFL_OUT + "/uncovered_functions.txt"
     with open(uncov_funcs, 'w+') as the_file:
         the_file.write("%s\n" %len(uncovered_funcs))

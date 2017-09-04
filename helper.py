@@ -24,6 +24,7 @@ def read_config(config_file):
     es.AFL_BINARY_ARGS = conf["AFL_BINARY_ARGS"]
     es.READ_FROM_FILE = conf["READ_FROM_FILE"]
     es.AFL_RESULTS_FOLDER = conf["AFL_RESULTS_FOLDER"]
+    #es.KLEE_RESULTS_FOLDER = conf["KLEE_RESULTS_FOLDER"]
 
 """
 Reads a list of all functions in topological order
