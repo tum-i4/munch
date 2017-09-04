@@ -1,11 +1,29 @@
 from os.path import expanduser
 import subprocess
 import json
+import essentials as es
 
 MYOPT = expanduser("~/build/llvm/Release/bin/opt")
 MYLIBMACKEOPT = expanduser("~/git/macke-opt-llvm/bin/libMackeOpt.so")
 
 MYKLEE = expanduser("/home/saahil/repos/klee22/Release+Asserts/bin/klee")
+
+"""
+Reads the local config file for the analyzed program
+"""
+def read_config(config_file):
+    json_file = open(config_file, "r")
+    conf = json.load(json_file)
+
+    #global READ_FROM_FILE, AFL_BINARY, LLVM_OBJ, GCOV_DIR, LLVM_OPT, LIB_MACKEOPT, AFL_BINARY_ARGS, AFL_RESULTS_FOLDER
+    es.AFL_BINARY = conf["AFL_BINARY"]
+    es.LLVM_OBJ = conf["LLVM_OBJ"]
+    es.GCOV_DIR = conf["GCOV_DIR"]
+    es.LLVM_OPT = conf["LLVM_OPT"]
+    es.LIB_MACKEOPT = conf["LIB_MACKEOPT"]
+    es.AFL_BINARY_ARGS = conf["AFL_BINARY_ARGS"]
+    es.READ_FROM_FILE = conf["READ_FROM_FILE"]
+    es.AFL_RESULTS_FOLDER = conf["AFL_RESULTS_FOLDER"]
 
 """
 Reads a list of all functions in topological order

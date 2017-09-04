@@ -2,37 +2,13 @@ import os, sys
 import subprocess, time, signal
 import json
 # from collections import OrderedDict
-
-AFL_BINARY = ""
-LLVM_OBJ = ""
-TESTCASES = ""
-FUZZ_TIME = ""
-GCOV_DIR = ""
-LLVM_OPT = ""
-LIB_MACKEOPT = ""
-AFL_OUT = ""
-AFL_BINARY_ARGS = ""
-READ_FROM_FILE = ""
-AFL_RESULTS_FOLDER = ""
-
-def read_config(config_file):
-    json_file = open(config_file, "r")
-    conf = json.load(json_file)
-
-    global READ_FROM_FILE, AFL_BINARY, LLVM_OBJ, GCOV_DIR, LLVM_OPT, LIB_MACKEOPT, AFL_BINARY_ARGS, AFL_RESULTS_FOLDER
-    AFL_BINARY = conf["AFL_BINARY"]
-    LLVM_OBJ = conf["LLVM_OBJ"]
-    GCOV_DIR = conf["GCOV_DIR"]
-    LLVM_OPT = conf["LLVM_OPT"]
-    LIB_MACKEOPT = conf["LIB_MACKEOPT"]
-    AFL_BINARY_ARGS = conf["AFL_BINARY_ARGS"]
-    READ_FROM_FILE = conf["READ_FROM_FILE"]
-    AFL_RESULTS_FOLDER = conf["AFL_RESULTS_FOLDER"]
+import essentials as es
+from helper import read_config
 
 def run_afl_cov(prog, path_to_afl_results, code_dir):
     afl_out_res = path_to_afl_results
     output = afl_out_res + "/" + "afl_cov.txt"
-    command = '"' + code_dir + ' ' + READ_FROM_FILE + ' AFL_FILE"'
+    command = '"' + code_dir + ' ' + es.READ_FROM_FILE + ' AFL_FILE"'
     print(command)
     pos = code_dir.rfind('/')
     code_dir = code_dir[:pos+1]
@@ -95,7 +71,7 @@ def main(argv):
 
     read_config(config_file)
     # get a list of functions topologically ordered
-    args = [LLVM_OPT, "-load", LIB_MACKEOPT, LLVM_OBJ,
+    args = [es.LLVM_OPT, "-load", es.LIB_MACKEOPT, es.LLVM_OBJ,
             "--listallfuncstopologic", "-disable-output"]
     result = subprocess.check_output(args)
     result = str(result, 'utf-8')
@@ -105,10 +81,10 @@ def main(argv):
     time.sleep(3)
 
     # run afl-fuzz
-    pos = AFL_BINARY.rfind('/')
-    AFL_OUT=AFL_BINARY[:pos+1]+AFL_RESULTS_FOLDER
+    pos = es.AFL_BINARY.rfind('/')
+    AFL_OUT=es.AFL_BINARY[:pos+1]+es.AFL_RESULTS_FOLDER
     if not os.path.isdir(AFL_OUT):
-        args = ["afl-fuzz", "-i", TESTCASES, "-o", AFL_OUT, AFL_BINARY, AFL_BINARY_ARGS]
+        args = ["afl-fuzz", "-i", TESTCASES, "-o", AFL_OUT, es.AFL_BINARY, es.AFL_BINARY_ARGS]
         # take the progs args as given from command line
         # if sys.argv[5:]:
         #    args = args + sys.argv[5:]
@@ -124,7 +100,7 @@ def main(argv):
         print("Continuing with coverage calculation...")
         time.sleep(1)
     
-    func_list_afl = run_afl_cov(AFL_BINARY, AFL_OUT, GCOV_DIR)
+    func_list_afl = run_afl_cov(es.AFL_BINARY, AFL_OUT, es.GCOV_DIR)
     print("AFL LIST: ")
     print(len(func_list_afl))
     print(func_list_afl)
@@ -155,9 +131,7 @@ def main(argv):
         for index in range(len(uncovered_funcs)):
             the_file.write("%s\n" %uncovered_funcs[index])
 
-
     return 1
-
 
 if __name__ == '__main__':
     main(sys.argv[1:])
