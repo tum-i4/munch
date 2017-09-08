@@ -145,7 +145,9 @@ def main():
 
     if output_to_file:
         outfile = open(outputtxt, "w+")
-        pprint(depthdict, outfile)
+        for c in covered_funcs_connected:
+            outfile.write("%s\n"%(c))
+        # pprint(depthdict, outfile)
 
 if __name__=='__main__':
     main()
