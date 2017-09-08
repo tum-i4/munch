@@ -80,6 +80,7 @@ def main(argv):
 
     klee_afl_fs_intersect = klee_set.intersection(afl_set.intersection(fs_set))
     klee_afl_sf_intersect = klee_set.intersection(afl_set.intersection(sf_set))
+    klee_fs_sf_intersect = klee_set.intersection(fs_set.intersection(sf_set))
     afl_fs_sf_intersect = afl_set.intersection(fs_set.intersection(sf_set))
 
     all_intersect = klee_set.intersection(afl_set.intersection(sf_set.intersection(fs_set)))
@@ -105,6 +106,7 @@ def main(argv):
     print("\n")
     print("KLEE & AFL & FS: %d"%(len(klee_afl_fs_intersect)))
     print("KLEE & AFL & SF: %d"%(len(klee_afl_sf_intersect)))
+    print("KLEE & FS & SF: %d"%(len(klee_fs_sf_intersect)))
     print("AFL & FS & SF: %d"%(len(afl_fs_sf_intersect)))
 
     print("\n")
