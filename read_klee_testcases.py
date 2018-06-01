@@ -9,7 +9,7 @@ def read_text(filename):
     return f.readline()
 
 def combine_args_and_stdin(out_folder):
-    if (os.path.isdir(out_folder+"/args" and os.path.isdir(out_folder+"/stdin")):
+    if os.path.isdir(out_folder+"/args") and os.path.isdir(out_folder+"/stdin"):
         if not os.path.isdir(out_folder+"/combined"):
             os.system("mkdir %s/combined"%(out_folder))
         for f in glob.glob(out_folder+"/args/*.txt"):
