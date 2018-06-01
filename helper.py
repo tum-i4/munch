@@ -39,7 +39,7 @@ def read_all_funcs(bcfilename):
 """
 Returns a list with only called functions from the extracted call-graph of a program"
 """
-def total_funcs_topologic(funcname, outjson, total_funcs ):
+def total_funcs_topologic(funcname, outjson, total_funcs):
     nested_dict = outjson.get(funcname)
     if not nested_dict.get("isexternal"):
         total_funcs.append(funcname)

@@ -26,12 +26,12 @@ def main(argv):
     #     os.makedirs(output_dir)
 
     # 2. patch the obfuscated program with the patch
-    filelist = glob.glob(obf_dir+'/*.c')
+    filelist = glob.glob(obf_dir + '/*.c')
     for filename in filelist:
         if not filename.startswith('.' or '..'):
             filename = os.path.basename(filename)
             print(filename)
-            f = open(obf_dir+"/"+filename, "r+")
+            f = open(obf_dir + "/" + filename, "r+")
             lines = f.readlines()
             f.close()
 

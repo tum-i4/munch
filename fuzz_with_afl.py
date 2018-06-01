@@ -11,7 +11,7 @@ def run_afl_cov(prog, path_to_afl_results, code_dir):
     command = '"' + code_dir + ' ' + es.READ_FROM_FILE + ' AFL_FILE"'
     print(command)
     pos = code_dir.rfind('/')
-    code_dir = code_dir[:pos+1]
+    code_dir = code_dir[:pos + 1]
     args = ['afl-cov', '-d', afl_out_res, '-e', command, '-c', code_dir, '--coverage-include-lines', '-O']
     print(args)
     #subprocess.call(args)
@@ -128,9 +128,9 @@ def main(argv):
     """
     uncov_funcs = AFL_OUT + "/uncovered_functions.txt"
     with open(uncov_funcs, 'w+') as the_file:
-        the_file.write("%s\n" %len(uncovered_funcs))
+        the_file.write("%s\n" % len(uncovered_funcs))
         for index in range(len(uncovered_funcs)):
-            the_file.write("%s\n" %uncovered_funcs[index])
+            the_file.write("%s\n" % uncovered_funcs[index])
 
     return 1
 
