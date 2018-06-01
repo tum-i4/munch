@@ -2,6 +2,7 @@ from os.path import expanduser
 import subprocess
 import json
 import essentials as es
+import os
 
 MYOPT = expanduser("~/build/llvm/Release/bin/opt")
 MYLIBMACKEOPT = expanduser("~/git/macke-opt-llvm/bin/libMackeOpt.so")
