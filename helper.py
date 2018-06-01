@@ -4,10 +4,10 @@ import json
 import essentials as es
 import os
 
-MYOPT = expanduser("~/build/llvm/Release/bin/opt")
-MYLIBMACKEOPT = expanduser("~/git/macke-opt-llvm/bin/libMackeOpt.so")
+MYOPT = expanduser(os.environ['HOME'] + "/build/llvm/Release/bin/opt")
+MYLIBMACKEOPT = expanduser(os.environ['HOME'] + "/build/macke-opt-llvm/bin/libMackeOpt.so")
 
-MYKLEE = expanduser("/home/saahil/repos/klee22/Release+Asserts/bin/klee")
+MYKLEE = expanduser(os.environ['HOME'] + "/build/klee/Release+Asserts/bin/klee")
 
 """
 Reads the local config file for the analyzed program

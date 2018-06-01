@@ -1,7 +1,7 @@
 import sys, os
 import glob
 
-KLEE_BIN_PATH = "/home/saahil/build/klee/Release+Asserts/bin/"
+KLEE_BIN_PATH = os.environ['HOME'] + "/build/klee/Release+Asserts/bin/"
 TESTCASE_I = 0
 
 def read_text(filename):

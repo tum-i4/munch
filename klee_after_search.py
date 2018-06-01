@@ -18,7 +18,7 @@ SYM_ARGS = ""
 SYM_FILES = ""
 FUNC_TIME = ""
 
-sys.path.append("/home/saahil/vdc")
+#sys.path.append("/home/saahil/vdc")
 
 def print_config():
     print("AFL_OBJECT: %s"%(AFL_OBJECT))
@@ -130,7 +130,7 @@ def main(argv):
     for key in func_dir:
         if func_dir[key] != 1:
             print(key)
-            args = ["/home/saahil/repos/%s/Release+Asserts/bin/klee"%(WHICH_KLEE), "--posix-runtime", "--libc=uclibc",
+            args = [os.environ['HOME'] + "/build/klee/Release+Asserts/bin/klee", "--posix-runtime", "--libc=uclibc",
                     "--only-output-states-covering-new",
                     "--disable-inlining", "-output-dir=" + LLVM_OBJECT[:pos + 1] + "/klee-out-"+key, "--optimize", "--max-time="+FUNC_TIME, "--watchdog",
                     "-search="+SEARCH_NAME, TARGET_INFO+key, LLVM_OBJECT, SYM_ARGS, SYM_FILES,
