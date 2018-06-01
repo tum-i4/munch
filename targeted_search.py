@@ -107,7 +107,7 @@ def main(argv):
     while(uncovered_funcs):
         temp = uncovered_funcs
         elem = temp.pop(0)
-        args = ["/home/eirini/repos/klee/Release+Asserts/bin/klee", "--disable-inlining", "-search=ld2t", targ+elem, llvm_obj]
+        args = [os.environ['HOME'] + "/build/klee/Release+Asserts/bin/klee", "--disable-inlining", "-search=ld2t", targ+elem, llvm_obj]
         subprocess.call(args)
         # check which funcs are covered and remove them
         f = open("klee-last/run.istats", "r")
