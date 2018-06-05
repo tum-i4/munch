@@ -49,7 +49,7 @@ def main(argv):
         raise 
 
     # get a list of functions topologically ordered
-    args = ["/home/saahil/build/llvm/Release/bin/opt", "-load", "/home/saahil/git/macke-opt-llvm/bin/libMackeOpt.so", llvm_obj,
+    args = [os.environ['HOME'] + "/build/llvm/Release/bin/opt", "-load", os.environ['HOME'] + "/build/macke-opt-llvm/bin/libMackeOpt.so", llvm_obj,
             "--listallfuncstopologic", "-disable-output"]
     result = subprocess.check_output(args)
     result = str(result, 'utf-8')
@@ -116,7 +116,7 @@ def main(argv):
     for key in func_dir:
         print(key)
         if func_dir[key] != 1:
-            args = ["/home/saahil/repos/klee/Release+Asserts/bin/klee", "--posix-runtime", "--libc=uclibc", "--only-output-states-covering-new", "--disable-inlining", "--optimize", "--max-time=60", "--watchdog", "-search=ld2t", targ+key, llvm_obj, "--sym-arg 20", "--sym-files 1 100"]
+            args = [os.environ['HOME'] + "/build/klee/Release+Asserts/bin/klee", "--posix-runtime", "--libc=uclibc", "--only-output-states-covering-new", "--disable-inlining", "--optimize", "--max-time=60", "--watchdog", "-search=ld2t", targ+key, llvm_obj, "--sym-arg 20", "--sym-files 1 100"]
             subprocess.Popen(args)
             time.sleep(65)
             klee_dir=llvm_obj[:pos+1]+"klee-last/run.istats"

@@ -2,11 +2,12 @@ from os.path import expanduser
 import subprocess
 import json
 import essentials as es
+import os
 
-MYOPT = expanduser("~/build/llvm/Release/bin/opt")
-MYLIBMACKEOPT = expanduser("~/git/macke-opt-llvm/bin/libMackeOpt.so")
+MYOPT = expanduser(os.environ['HOME'] + "/build/llvm/Release/bin/opt")
+MYLIBMACKEOPT = expanduser(os.environ['HOME'] + "/build/macke-opt-llvm/bin/libMackeOpt.so")
 
-MYKLEE = expanduser("/home/saahil/repos/klee22/Release+Asserts/bin/klee")
+MYKLEE = expanduser(os.environ['HOME'] + "/build/klee/Release+Asserts/bin/klee")
 
 """
 Reads the local config file for the analyzed program
@@ -39,7 +40,7 @@ def read_all_funcs(bcfilename):
 """
 Returns a list with only called functions from the extracted call-graph of a program"
 """
-def total_funcs_topologic(funcname, outjson, total_funcs ):
+def total_funcs_topologic(funcname, outjson, total_funcs):
     nested_dict = outjson.get(funcname)
     if not nested_dict.get("isexternal"):
         total_funcs.append(funcname)

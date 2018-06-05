@@ -18,7 +18,7 @@ SYM_ARGS = ""
 SYM_FILES = ""
 FUNC_TIME = ""
 
-sys.path.append("/home/saahil/vdc")
+#sys.path.append("/home/saahil/vdc")
 
 def print_config():
     print("AFL_OBJECT: %s"%(AFL_OBJECT))
@@ -130,10 +130,10 @@ def main(argv):
     for key in func_dir:
         if func_dir[key] != 1:
             print(key)
-            args = ["/home/saahil/repos/%s/Release+Asserts/bin/klee"%(WHICH_KLEE), "--posix-runtime", "--libc=uclibc",
+            args = [os.environ['HOME'] + "/build/klee/Release+Asserts/bin/klee", "--posix-runtime", "--libc=uclibc",
                     "--only-output-states-covering-new",
-                    "--disable-inlining", "-output-dir=" + LLVM_OBJECT[:pos + 1] + "/klee-out-"+key, "--optimize", "--max-time="+FUNC_TIME, "--watchdog",
-                    "-search="+SEARCH_NAME, TARGET_INFO+key, LLVM_OBJECT, SYM_ARGS, SYM_FILES,
+                    "--disable-inlining", "-output-dir=" + LLVM_OBJECT[:pos + 1] + "/klee-out-" + key, "--optimize", "--max-time=" + FUNC_TIME, "--watchdog",
+                    "-search=" + SEARCH_NAME, TARGET_INFO + key, LLVM_OBJECT, SYM_ARGS, SYM_FILES,
                     SYM_STDIN]
             try:
                 str_args = " ".join(args)
@@ -145,15 +145,15 @@ def main(argv):
                 print("Args of the child process: ", proc.args)
                 raise
 
-            run_istats = LLVM_OBJECT[:pos + 1] + "klee-out-"+key+"/run.istats"
+            run_istats = LLVM_OBJECT[:pos + 1] + "klee-out-" + key + "/run.istats"
             covered_from_key = run_klee_cov(LLVM_OBJECT, run_istats)
             
-            frontier_file.write("%s:\n"%(key))
+            frontier_file.write("%s:\n" % (key))
             for c in covered_from_key:
                 if c in func_dir.keys():
                     if func_dir[c] != 1:
                         func_dir[c] = 1
-                        frontier_file.write("\t%s\n"%(c))
+                        frontier_file.write("\t%s\n" % (c))
 
     for key in func_dir:
         if func_dir[key] == 1:
