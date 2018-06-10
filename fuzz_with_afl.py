@@ -74,7 +74,7 @@ def main(argv):
     args = [es.LLVM_OPT, "-load", es.LIB_MACKEOPT, es.LLVM_OBJ,
             "--listallfuncstopologic", "-disable-output"]
     result = subprocess.check_output(args)
-    result = str(result, 'utf-8')
+    result = unicode(result, 'utf-8')
     all_funcs_topologic = order_funcs_topologic(result)
     print("TOTAL FUNCS : ")
     print(len(all_funcs_topologic))
