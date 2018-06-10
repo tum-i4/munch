@@ -1,0 +1,10 @@
+{
+    "AFL_BINARY": "",
+    "LLVM_OBJ": "",
+    "GCOV_DIR": "",
+    "LLVM_OPT": "",
+    "LIB_MACKEOPT": "",
+    "AFL_BINARY_ARGS": "",
+    "READ_FROM_FILE": "",
+    "AFL_RESULTS_FOLDER": ""
+}
