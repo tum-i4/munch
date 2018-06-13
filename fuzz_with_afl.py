@@ -82,7 +82,7 @@ def main(config_file, testcase, fuzz_time):
         time.sleep(3)
         proc = subprocess.Popen(args)
 
-        time.sleep(fuzz_time)
+        time.sleep(int(fuzz_time))
         os.kill(proc.pid, signal.SIGKILL)
     else:
         print("That directory already contains past fuzzing results.")
