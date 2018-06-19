@@ -1,0 +1,12 @@
+{
+    "AFL_OBJECT": "",
+    "LLVM_OBJECT": "",
+    "WHICH_KLEE": "",
+    "AFL_FOLDER_NAME": "",
+    "SEARCH_NAME": "",
+    "TARGET_INFO": "",
+    "SYM_STDIN": "",
+    "SYM_ARGS": "",
+    "SYM_FILES": "",
+    "FUNC_TIME": ""
+}
