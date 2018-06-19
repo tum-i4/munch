@@ -76,16 +76,7 @@ def run_klee_cov(prog, klee_out_res):
 
     return covered
 
-def main(argv):
-    try:
-        config_file = sys.argv[1]
-        # afl_binary = sys.argv[1]
-        # llvm_obj = sys.argv[2]
-        # func_time = sys.argv[3]
-    except IndexError:
-        print("Wrong number of command line args:", sys.exc_info()[0])
-        raise
-
+def main(config_file):
     read_config(config_file)
 
     # get a list of functions topologically ordered
@@ -169,5 +160,10 @@ def main(argv):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    try:
+        config_file = sys.argv[1]
+    except IndexError:
+        print("Wrong number of command line args:", sys.exc_info()[0])
+        raise
 
+    main(config_file)
