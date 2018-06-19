@@ -84,6 +84,8 @@ def get_object_type(o):
         return "stdin-stat"
     elif name_line.startswith("model_version"):
         return "model"
+    elif name_line.startswith("stdout"):
+        return "stdout"
 
     return "None"
 
@@ -186,6 +188,8 @@ def write_testcase_file(testname, objects, out_folder):
             name, size, data = get_full_stdin_stat(o)
         elif type == "model":
             name, size, data = get_full_model_version(o)
+        elif type == "stdout":
+            pass
         else:
             print("Invalid type '%s' read. Ending in panic" % (type))
             sys.exit(-1)

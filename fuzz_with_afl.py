@@ -58,23 +58,13 @@ def order_funcs_topologic(list_of_functions):
     return l
 
 
-def main(argv):
-    global TESTCASES, FUZZ_TIME, AFL_OUT
-    try:
-        config_file = sys.argv[1]
-        TESTCASES = sys.argv[2]  # testcases for the program used by afl-fuzz
-        FUZZ_TIME = int(sys.argv[3])  # time to run afl-fuzzer
-        # AFL_OUT = sys.argv[4]
-    except IndexError:
-        print("Wrong number of command line args:", sys.exc_info()[0])
-        raise
-
+def main(config_file, testcase, fuzz_time):
     read_config(config_file)
     # get a list of functions topologically ordered
     args = [es.LLVM_OPT, "-load", es.LIB_MACKEOPT, es.LLVM_OBJ,
             "--listallfuncstopologic", "-disable-output"]
     result = subprocess.check_output(args)
-    result = str(result, 'utf-8')
+    result = unicode(result, 'utf-8')
     all_funcs_topologic = order_funcs_topologic(result)
     print("TOTAL FUNCS : ")
     print(len(all_funcs_topologic))
@@ -82,9 +72,8 @@ def main(argv):
 
     # run afl-fuzz
     pos = es.AFL_BINARY.rfind('/')
-    AFL_OUT=es.AFL_BINARY[:pos+1]+es.AFL_RESULTS_FOLDER
-    if not os.path.isdir(AFL_OUT):
-        args = ["afl-fuzz", "-i", TESTCASES, "-o", AFL_OUT, es.AFL_BINARY, es.AFL_BINARY_ARGS]
+    if not os.path.isdir(es.AFL_RESULTS_FOLDER):
+        args = ["afl-fuzz", "-i", testcase, "-o", es.AFL_RESULTS_FOLDER, es.AFL_BINARY, es.AFL_BINARY_ARGS]
         # take the progs args as given from command line
         # if sys.argv[5:]:
         #    args = args + sys.argv[5:]
@@ -93,7 +82,7 @@ def main(argv):
         time.sleep(3)
         proc = subprocess.Popen(args)
 
-        time.sleep(FUZZ_TIME)
+        time.sleep(int(fuzz_time))
         os.kill(proc.pid, signal.SIGKILL)
     else:
         print("That directory already contains past fuzzing results.")
@@ -104,7 +93,7 @@ def main(argv):
     # be sure it's topologically sorted
     print("Computing function coverage after fuzzing...")
     time.sleep(2)
-    func_list_afl = run_afl_cov(es.AFL_BINARY, AFL_OUT, es.GCOV_DIR)
+    func_list_afl = run_afl_cov(es.AFL_BINARY, es.AFL_RESULTS_FOLDER, es.GCOV_DIR)
     print("AFL LIST: ")
     print(len(func_list_afl))
     print(func_list_afl)
@@ -126,7 +115,7 @@ def main(argv):
         for index in range(len(func_list_afl)):
             the_file.write("%s\n" %func_list_afl[index])
     """
-    uncov_funcs = AFL_OUT + "/uncovered_functions.txt"
+    uncov_funcs = es.AFL_RESULTS_FOLDER + "/uncovered_functions.txt"
     with open(uncov_funcs, 'w+') as the_file:
         the_file.write("%s\n" % len(uncovered_funcs))
         for index in range(len(uncovered_funcs)):
@@ -135,4 +124,12 @@ def main(argv):
     return 1
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    try:
+        config_file = sys.argv[1]
+        testcase = sys.argv[2]  # testcases for the program used by afl-fuzz
+        fuzz_time = int(sys.argv[3])  # time to run afl-fuzzer
+    except IndexError:
+        print("Wrong number of command line args:", sys.exc_info()[0])
+        raise
+
+    main(config_file, testcase, fuzz_time)
