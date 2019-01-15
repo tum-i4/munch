@@ -13,4 +13,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     read_klee_testcases.main(args.klee_out_folder, args.testcase_output_folder)
-    fuzz_with_afl.main(args.config, args.testcase_output_folder + '/stdin', args.time)
+    fuzz_with_afl.main(args.config)

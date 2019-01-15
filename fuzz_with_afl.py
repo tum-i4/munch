@@ -58,9 +58,25 @@ def order_funcs_topologic(list_of_functions):
     return l
 
 
-def main(config_file, testcase, fuzz_time):
+def main(config_file):
     read_config(config_file)
+
+    testcase = es.TESTCASES
+
+    if not os.path.isdir(testcase):
+        print("Testcases directory does not exist: %d"%(testcases))
+        print("Exiting...")
+        return -1
+
+    fuzz_time = 0
+    try:
+        fuzz_time = int(es.FUZZTIME)
+    except ValueError:
+        print("Fuzz time invalid: %s"%(es.FUZZTIME))
+        return -1
+    
     # get a list of functions topologically ordered
+    '''
     args = [es.LLVM_OPT, "-load", es.LIB_MACKEOPT, es.LLVM_OBJ,
             "--listallfuncstopologic", "-disable-output"]
     result = subprocess.check_output(args)
@@ -69,6 +85,7 @@ def main(config_file, testcase, fuzz_time):
     print("TOTAL FUNCS : ")
     print(len(all_funcs_topologic))
     time.sleep(3)
+    '''
 
     # run afl-fuzz
     pos = es.AFL_BINARY.rfind('/')
@@ -79,11 +96,11 @@ def main(config_file, testcase, fuzz_time):
         #    args = args + sys.argv[5:]
 
         print("Preparing to fuzz...")
-        time.sleep(3)
+        time.sleep(2)
         proc = subprocess.Popen(args)
 
         time.sleep(int(fuzz_time))
-        os.kill(proc.pid, signal.SIGKILL)
+        os.kill(proc.pid, signal.SIGINT)
     else:
         print("That directory already contains past fuzzing results.")
         print("Continuing with coverage calculation...")
@@ -94,18 +111,18 @@ def main(config_file, testcase, fuzz_time):
     print("Computing function coverage after fuzzing...")
     time.sleep(2)
     func_list_afl = run_afl_cov(es.AFL_BINARY, es.AFL_RESULTS_FOLDER, es.GCOV_DIR)
-    print("AFL LIST: ")
-    print(len(func_list_afl))
-    print(func_list_afl)
+    #print("AFL LIST: ")
+    print("%d functions covered by AFL."%len(func_list_afl))
+    #print(func_list_afl)
 
     uncovered_funcs = []
     for index in range(len(all_funcs_topologic)):
         if all_funcs_topologic[index] not in func_list_afl:
             uncovered_funcs.append(all_funcs_topologic[index])
 
-    print("UNCOVERED LIST: ")
-    print(len(uncovered_funcs))
-    print(uncovered_funcs)
+    #print("UNCOVERED LIST: ")
+    print("%d functions to be targeted by symbolic execution."%len(uncovered_funcs))
+    #print(uncovered_funcs)
 
     # save the list of covered and uncovered functions after fuzzing
     """

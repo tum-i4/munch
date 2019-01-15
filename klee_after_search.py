@@ -81,9 +81,10 @@ def main(config_file):
 
     # get a list of functions topologically ordered
     all_funcs_topologic = helper.get_all_called_funcs(LLVM_OBJECT)
-    print(len(all_funcs_topologic))
-    print("All functions:", all_funcs_topologic)
+    print("Found %d functions in the program..."%len(all_funcs_topologic))
+    #print("All functions:", all_funcs_topologic)
 
+    #TODO: First run AFL here
     pos = AFL_OBJECT.rfind('/')
     afl_out_dir = AFL_OBJECT[:pos + 1] + AFL_FOLDER_NAME 
     func_list_afl = run_afl_cov(AFL_OBJECT, afl_out_dir)
