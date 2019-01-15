@@ -17,17 +17,24 @@ def read_config(config_file):
     conf = json.load(json_file)
 
     #global READ_FROM_FILE, AFL_BINARY, LLVM_OBJ, GCOV_DIR, LLVM_OPT, LIB_MACKEOPT, AFL_BINARY_ARGS, AFL_RESULTS_FOLDER
-    es.AFL_BINARY = conf["AFL_BINARY"]
+    global AFL_OBJ, WHICH_KLEE, LLVM_OBJ, TESTCASES, FUZZ_TIME, GCOV_DIR, LLVM_OPT, LIB_MACKEOPT, AFL_BINARY_ARGS, READ_FROM_FILE, OUTPUT_DIR, AFL_RESULTS_FOLDER, KLEE_RESULTS_FOLDER, FUZZ_TIME
+    es.AFL_OBJ = conf["AFL_OBJ"]
     es.LLVM_OBJ = conf["LLVM_OBJ"]
+    es.GCOV_OBJ = conf["GCOV_OBJ"]
     es.GCOV_DIR = conf["GCOV_DIR"]
     es.LLVM_OPT = conf["LLVM_OPT"]
     es.LIB_MACKEOPT = conf["LIB_MACKEOPT"]
     es.AFL_BINARY_ARGS = conf["AFL_BINARY_ARGS"]
     es.READ_FROM_FILE = conf["READ_FROM_FILE"]
-    es.AFL_RESULTS_FOLDER = conf["AFL_RESULTS_FOLDER"]
+    
+    es.OUTPUT_DIR = conf["OUTPUT_DIR"]
+    es.AFL_RESULTS_FOLDER = os.path.join(conf["OUTPUT_DIR"], "afl_out")
+    es.KLEE_RESULTS_FOLDER = os.path.join(conf["OUTPUT_DIR"], "klee_out")
+
     es.TESTCASES = conf["TESTCASES"]
-    es.FUZZTIME = conf["FUZZTIME"]
-    #es.KLEE_RESULTS_FOLDER = conf["KLEE_RESULTS_FOLDER"]
+    es.FUZZ_TIME = conf["FUZZ_TIME"]
+    
+    es.WHICH_KLEE = conf["WHICH_KLEE"]
 
 """
 Reads a list of all functions in topological order

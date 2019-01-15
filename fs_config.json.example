@@ -1,12 +1,21 @@
 {
-    "AFL_OBJECT": "",
-    "LLVM_OBJECT": "",
     "WHICH_KLEE": "",
-    "AFL_FOLDER_NAME": "",
+    "LLVM_OBJ": "",
     "SEARCH_NAME": "",
     "TARGET_INFO": "",
     "SYM_STDIN": "",
     "SYM_ARGS": "",
     "SYM_FILES": "",
-    "FUNC_TIME": ""
+    "KLEE_TIME": "", 
+    
+    "AFL_OBJ": "",
+    "TESTCASES": "",
+    "FUZZ_TIME": "",
+    "GCOV_DIR": "",
+    "GCOV_OBJ": "",
+    "LLVM_OPT": "",
+    "LIB_MACKEOPT": "",
+    "AFL_BINARY_ARGS": "",
+    "READ_FROM_FILE": "",
+    "OUTPUT_DIR": ""
 }

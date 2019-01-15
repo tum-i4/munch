@@ -5,13 +5,15 @@ import json
 import essentials as es
 from helper import read_config
 
-def run_afl_cov(prog, path_to_afl_results, code_dir):
+global AFL_OBJ, WHICH_KLEE, LLVM_OBJ, TESTCASES, FUZZ_TIME, GCOV_DIR, LLVM_OPT, LIB_MACKEOPT, AFL_BINARY_ARGS, READ_FROM_FILE, OUTPUT_DIR, AFL_RESULTS_FOLDER, KLEE_RESULTS_FOLDER, FUZZ_TIME
+
+def run_afl_cov(prog, path_to_afl_results, gcov_obj, code_dir):
     afl_out_res = path_to_afl_results
     output = afl_out_res + "/" + "afl_cov.txt"
-    command = '"' + code_dir + ' ' + es.READ_FROM_FILE + ' AFL_FILE"'
+    command = '"' + gcov_obj + ' ' + es.READ_FROM_FILE + ' AFL_FILE"'
     print(command)
-    pos = code_dir.rfind('/')
-    code_dir = code_dir[:pos + 1]
+    #pos = code_dir.rfind('/')
+    #code_dir = code_dir[:pos + 1]
     args = ['afl-cov', '-d', afl_out_res, '-e', command, '-c', code_dir, '--coverage-include-lines', '-O']
     print(args)
     #subprocess.call(args)
@@ -70,9 +72,9 @@ def main(config_file):
 
     fuzz_time = 0
     try:
-        fuzz_time = int(es.FUZZTIME)
+        fuzz_time = int(es.FUZZ_TIME)
     except ValueError:
-        print("Fuzz time invalid: %s"%(es.FUZZTIME))
+        print("Fuzz time invalid: %s"%(es.FUZZ_TIME))
         return -1
     
     # get a list of functions topologically ordered
@@ -88,9 +90,9 @@ def main(config_file):
     '''
 
     # run afl-fuzz
-    pos = es.AFL_BINARY.rfind('/')
+    #pos = es.AFL_BINARY.rfind('/')
     if not os.path.isdir(es.AFL_RESULTS_FOLDER):
-        args = ["afl-fuzz", "-i", testcase, "-o", es.AFL_RESULTS_FOLDER, es.AFL_BINARY, es.AFL_BINARY_ARGS]
+        args = ["afl-fuzz", "-i", testcase, "-o", es.AFL_RESULTS_FOLDER, es.AFL_OBJ, es.AFL_BINARY_ARGS]
         # take the progs args as given from command line
         # if sys.argv[5:]:
         #    args = args + sys.argv[5:]
@@ -110,7 +112,7 @@ def main(config_file):
     # be sure it's topologically sorted
     print("Computing function coverage after fuzzing...")
     time.sleep(2)
-    func_list_afl = run_afl_cov(es.AFL_BINARY, es.AFL_RESULTS_FOLDER, es.GCOV_DIR)
+    func_list_afl = run_afl_cov(es.AFL_OBJ, es.AFL_RESULTS_FOLDER, es.GCOV_OBJ, es.GCOV_DIR)
     #print("AFL LIST: ")
     print("%d functions covered by AFL."%len(func_list_afl))
     #print(func_list_afl)

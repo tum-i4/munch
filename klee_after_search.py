@@ -6,17 +6,17 @@ import argparse
 from os import path
 import json
 from pprint import pprint
+from helper import read_config
+import essentials as es
 
-AFL_OBJECT = ""
-LLVM_OBJECT = ""
-WHICH_KLEE = ""
-AFL_FOLDER_NAME  = ""
 SEARCH_NAME = ""
 TARGET_INFO = ""
 SYM_STDIN = ""
 SYM_ARGS = ""
 SYM_FILES = ""
-FUNC_TIME = ""
+KLEE_TIME = ""
+
+global AFL_OBJ, WHICH_KLEE, LLVM_OBJ, TESTCASES, FUZZ_TIME, GCOV_DIR, LLVM_OPT, LIB_MACKEOPT, AFL_BINARY_ARGS, READ_FROM_FILE, OUTPUT_DIR, AFL_RESULTS_FOLDER, KLEE_RESULTS_FOLDER, FUZZ_TIME
 
 #sys.path.append("/home/saahil/vdc")
 
@@ -28,24 +28,24 @@ def print_config():
     print("SEARCH_NAME: %s"%(SEARCH_NAME))
     print("TARGET_INFO: %s"%(TARGET_INFO))
     print("SYM_STDIN: %s SYM_ARGS: %s SYM_FILES: %s"%(SYM_STDIN, SYM_ARGS, SYM_FILES))
-    print("FUNC_TIME: %s"%(FUNC_TIME))
+    print("KLEE_TIME: %s"%(KLEE_TIME))
 
 """ Get configuration for after-search """
-def read_config(config_file):
+def read_config_repeat(config_file):
     json_file = open(config_file, "r")
     conf = json.load(json_file)
 
-    global AFL_OBJECT, LLVM_OBJECT, WHICH_KLEE, AFL_FOLDER_NAME, SEARCH_NAME, TARGET_INFO, SYM_STDIN, SYM_ARGS, SYM_FILES, FUNC_TIME
-    AFL_OBJECT = conf['AFL_OBJECT']
-    LLVM_OBJECT = conf["LLVM_OBJECT"]
-    WHICH_KLEE = conf["WHICH_KLEE"]
-    AFL_FOLDER_NAME = conf["AFL_FOLDER_NAME"]
+    global AFL_OBJECT, LLVM_OBJECT, WHICH_KLEE, AFL_FOLDER_NAME, SEARCH_NAME, TARGET_INFO, SYM_STDIN, SYM_ARGS, SYM_FILES, KLEE_TIME
+    #AFL_OBJECT = conf['AFL_OBJECT']
+    #LLVM_OBJECT = conf["LLVM_OBJECT"]
+    #WHICH_KLEE = conf["WHICH_KLEE"]
+    #AFL_FOLDER_NAME = conf["AFL_FOLDER_NAME"]
     SEARCH_NAME = conf["SEARCH_NAME"]
     TARGET_INFO = conf["TARGET_INFO"]
     SYM_STDIN = conf["SYM_STDIN"]
     SYM_ARGS = conf["SYM_ARGS"]
     SYM_FILES = conf["SYM_FILES"]
-    FUNC_TIME = conf["FUNC_TIME"]
+    KLEE_TIME = conf["KLEE_TIME"]
 
     print_config()
 
@@ -78,28 +78,27 @@ def run_klee_cov(prog, klee_out_res):
 
 def main(config_file):
     read_config(config_file)
+    read_config_repeat(config_file)
 
     # get a list of functions topologically ordered
-    all_funcs_topologic = helper.get_all_called_funcs(LLVM_OBJECT)
-    print("Found %d functions in the program..."%len(all_funcs_topologic))
+    all_funcs_topologic = helper.get_all_called_funcs(es.LLVM_OBJ)
+    #print("Found %d functions in the program..."%len(all_funcs_topologic))
     #print("All functions:", all_funcs_topologic)
 
-    #TODO: First run AFL here
-    pos = AFL_OBJECT.rfind('/')
-    afl_out_dir = AFL_OBJECT[:pos + 1] + AFL_FOLDER_NAME 
-    func_list_afl = run_afl_cov(AFL_OBJECT, afl_out_dir)
-    print("AFL func coverage")
+    afl_out_dir = es.AFL_RESULTS_FOLDER 
+    func_list_afl = run_afl_cov(es.AFL_OBJ, afl_out_dir)
+    #print("AFL func coverage")
     func_list_afl = set(func_list_afl)
-    print(len(func_list_afl))
-    print(func_list_afl)
+    #print(len(func_list_afl))
+    #print(func_list_afl)
 
     uncovered_funcs = []  # all_funcs_topologic - func_list_afl
     for index in range(len(all_funcs_topologic)):
         if all_funcs_topologic[index] not in func_list_afl:
             uncovered_funcs.append(all_funcs_topologic[index])
 
-    print(len(uncovered_funcs))
-    print(uncovered_funcs)
+    print("Functions to be covered by KLEE: %d"%len(uncovered_funcs))
+    #print(uncovered_funcs)
 
     func_dir = OrderedDict()
     for index in range(len(uncovered_funcs)):
@@ -107,10 +106,10 @@ def main(config_file):
         func_dir[func] = 0
 
     covered_from_klee = set()
-    pos = LLVM_OBJECT.rfind('/')
-    klee_cov_funcs = LLVM_OBJECT[:pos + 1] + "covered_funcs.txt"
-    klee_uncov_funcs = LLVM_OBJECT[:pos + 1] + "uncovered_funcs.txt"
-    frontier_nodes = LLVM_OBJECT[:pos + 1] + "frontier_nodes.txt"
+    #pos = LLVM_OBJECT.rfind('/')
+    klee_cov_funcs = os.path.join(es.KLEE_OUTPUT_FOLDER, "covered_funcs.txt")
+    klee_uncov_funcs = os.path.join(es.KLEE_OUTPUT_FOLDER, "uncovered_funcs.txt")
+    frontier_nodes = os.path.join(es.KLEE_OUTPUT_FOLDER, "frontier_nodes.txt")
 
     cov_file = open(klee_cov_funcs, "w+")
     uncov_file = open(klee_uncov_funcs, "w+")
@@ -118,14 +117,17 @@ def main(config_file):
 
     targ = TARGET_INFO
 
+    FUNC_TIME = str(int(KLEE_TIME)/len(func_dir.keys()))
+    print("KLEE will be run for %d seconds for each function"%(FUNC_TIME))
+
     # run selected version of KLEE
     for key in func_dir:
         if func_dir[key] != 1:
             print(key)
-            args = [os.environ['HOME'] + "/build/klee/Release+Asserts/bin/klee", "--posix-runtime", "--libc=uclibc",
+            args = [es.WHICH_KLEE, "--posix-runtime", "--libc=uclibc",
                     "--only-output-states-covering-new",
-                    "--disable-inlining", "-output-dir=" + LLVM_OBJECT[:pos + 1] + "/klee-out-" + key, "--optimize", "--max-time=" + FUNC_TIME, "--watchdog",
-                    "-search=" + SEARCH_NAME, TARGET_INFO + key, LLVM_OBJECT, SYM_ARGS, SYM_FILES,
+                    "--disable-inlining", "-output-dir=" + es.KLEE_OUTPUT_FOLDER + "/klee-out-" + key, "--optimize", "--max-time=" + FUNC_TIME, "--watchdog",
+                    "-search=" + SEARCH_NAME, TARGET_INFO + key, es.LLVM_OBJ, SYM_ARGS, SYM_FILES,
                     SYM_STDIN]
             try:
                 str_args = " ".join(args)
@@ -137,8 +139,8 @@ def main(config_file):
                 print("Args of the child process: ", proc.args)
                 raise
 
-            run_istats = LLVM_OBJECT[:pos + 1] + "klee-out-" + key + "/run.istats"
-            covered_from_key = run_klee_cov(LLVM_OBJECT, run_istats)
+            run_istats = es.KLEE_OUTPUT_FOLDER + "/klee-out-" + key + "/run.istats"
+            covered_from_key = run_klee_cov(es.LLVM_OBJ, run_istats)
             
             frontier_file.write("%s:\n" % (key))
             for c in covered_from_key:
@@ -147,18 +149,23 @@ def main(config_file):
                         func_dir[c] = 1
                         frontier_file.write("\t%s\n" % (c))
 
+    covered = 0
+    uncovered = 0
     for key in func_dir:
         if func_dir[key] == 1:
+            covered += 1
             cov_file.write("%s\n" % key)
         else:
+            uncovered += 1
             uncov_file.write("%s\n" % key)
 
     cov_file.close()
     uncov_file.close()
     frontier_file.close()
 
+    print("%d more functions covered by KLEE."%(covered))
+    print("%d functions still uncovered"%(uncovered))
     return 0
-
 
 if __name__ == '__main__':
     try:
