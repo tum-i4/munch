@@ -21,8 +21,8 @@ global AFL_OBJ, WHICH_KLEE, LLVM_OBJ, TESTCASES, FUZZ_TIME, GCOV_DIR, LLVM_OPT, 
 #sys.path.append("/home/saahil/vdc")
 
 def print_config():
-    print("AFL_OBJECT: %s"%(AFL_OBJECT))
-    print("LLVM_OBJECT: %s"%(LLVM_OBJECT))
+    print("AFL_OBJECT: %s"%(AFL_OBJ))
+    print("LLVM_OBJECT: %s"%(LLVM_OBJ))
     print("WHICH_KLEE: %s"%(WHICH_KLEE))
     print("AFL_FOLDER_NAME: %s"%(AFL_FOLDER_NAME))
     print("SEARCH_NAME: %s"%(SEARCH_NAME))
@@ -47,7 +47,7 @@ def read_config_repeat(config_file):
     SYM_FILES = conf["SYM_FILES"]
     KLEE_TIME = conf["KLEE_TIME"]
 
-    print_config()
+    #print_config()
 
 """ Returns afl function coverage """
 def run_afl_cov(prog, afl_out_res):
@@ -107,9 +107,12 @@ def main(config_file):
 
     covered_from_klee = set()
     #pos = LLVM_OBJECT.rfind('/')
-    klee_cov_funcs = os.path.join(es.KLEE_OUTPUT_FOLDER, "covered_funcs.txt")
-    klee_uncov_funcs = os.path.join(es.KLEE_OUTPUT_FOLDER, "uncovered_funcs.txt")
-    frontier_nodes = os.path.join(es.KLEE_OUTPUT_FOLDER, "frontier_nodes.txt")
+    if not os.path.isdir(es.KLEE_RESULTS_FOLDER):
+        os.system("mkdir %s"%(es.KLEE_RESULTS_FOLDER))
+
+    klee_cov_funcs = os.path.join(es.KLEE_RESULTS_FOLDER, "covered_funcs.txt")
+    klee_uncov_funcs = os.path.join(es.KLEE_RESULTS_FOLDER, "uncovered_funcs.txt")
+    frontier_nodes = os.path.join(es.KLEE_RESULTS_FOLDER, "frontier_nodes.txt")
 
     cov_file = open(klee_cov_funcs, "w+")
     uncov_file = open(klee_uncov_funcs, "w+")
@@ -118,7 +121,7 @@ def main(config_file):
     targ = TARGET_INFO
 
     FUNC_TIME = str(int(KLEE_TIME)/len(func_dir.keys()))
-    print("KLEE will be run for %d seconds for each function"%(FUNC_TIME))
+    print("KLEE will be run for %s seconds for each function"%(FUNC_TIME))
 
     # run selected version of KLEE
     for key in func_dir:
@@ -126,7 +129,7 @@ def main(config_file):
             print(key)
             args = [es.WHICH_KLEE, "--posix-runtime", "--libc=uclibc",
                     "--only-output-states-covering-new",
-                    "--disable-inlining", "-output-dir=" + es.KLEE_OUTPUT_FOLDER + "/klee-out-" + key, "--optimize", "--max-time=" + FUNC_TIME, "--watchdog",
+                    "--disable-inlining", "-output-dir=" + es.KLEE_RESULTS_FOLDER + "/klee-out-" + key, "--optimize", "--max-time=" + FUNC_TIME, "--watchdog",
                     "-search=" + SEARCH_NAME, TARGET_INFO + key, es.LLVM_OBJ, SYM_ARGS, SYM_FILES,
                     SYM_STDIN]
             try:
@@ -139,7 +142,7 @@ def main(config_file):
                 print("Args of the child process: ", proc.args)
                 raise
 
-            run_istats = es.KLEE_OUTPUT_FOLDER + "/klee-out-" + key + "/run.istats"
+            run_istats = es.KLEE_RESULTS_FOLDER + "/klee-out-" + key + "/run.istats"
             covered_from_key = run_klee_cov(es.LLVM_OBJ, run_istats)
             
             frontier_file.write("%s:\n" % (key))

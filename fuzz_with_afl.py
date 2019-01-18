@@ -7,17 +7,17 @@ from helper import read_config
 
 global AFL_OBJ, WHICH_KLEE, LLVM_OBJ, TESTCASES, FUZZ_TIME, GCOV_DIR, LLVM_OPT, LIB_MACKEOPT, AFL_BINARY_ARGS, READ_FROM_FILE, OUTPUT_DIR, AFL_RESULTS_FOLDER, KLEE_RESULTS_FOLDER, FUZZ_TIME
 
-def run_afl_cov(prog, path_to_afl_results, gcov_obj, code_dir):
+def run_afl_cov(prog, prog_args, path_to_afl_results, gcov_obj, code_dir):
     afl_out_res = path_to_afl_results
     output = afl_out_res + "/" + "afl_cov.txt"
-    command = '"' + gcov_obj + ' ' + es.READ_FROM_FILE + ' AFL_FILE"'
-    print(command)
+    command = '"' + gcov_obj + ' ' + prog_args + ' ' + es.READ_FROM_FILE + ' AFL_FILE"'
+    #print(command)
     #pos = code_dir.rfind('/')
     #code_dir = code_dir[:pos + 1]
     args = ['afl-cov', '-d', afl_out_res, '-e', command, '-c', code_dir, '--coverage-include-lines', '-O']
-    print(args)
+    #print(args)
     #subprocess.call(args)
-    os.system(" ".join(args))
+    os.system(" ".join(args)+" >/dev/null 2>&1")
 
     # get function coverage
     cov_dir = afl_out_res + "/cov/"
@@ -56,7 +56,7 @@ def order_funcs_topologic(list_of_functions):
         l.append(func)
 
     l.reverse()
-    print(l)
+    #print(l)
     return l
 
 
@@ -78,17 +78,19 @@ def main(config_file):
         return -1
     
     # get a list of functions topologically ordered
-    '''
     args = [es.LLVM_OPT, "-load", es.LIB_MACKEOPT, es.LLVM_OBJ,
             "--listallfuncstopologic", "-disable-output"]
     result = subprocess.check_output(args)
-    result = unicode(result, 'utf-8')
-    all_funcs_topologic = order_funcs_topologic(result)
+    #result = [r.strip("\\n") for r in result]
+    result = str(result, 'utf-8')
+
+    '''
     print("TOTAL FUNCS : ")
     print(len(all_funcs_topologic))
     time.sleep(3)
     '''
 
+    all_funcs_topologic = order_funcs_topologic(result)
     # run afl-fuzz
     #pos = es.AFL_BINARY.rfind('/')
     if not os.path.isdir(es.AFL_RESULTS_FOLDER):
@@ -112,7 +114,7 @@ def main(config_file):
     # be sure it's topologically sorted
     print("Computing function coverage after fuzzing...")
     time.sleep(2)
-    func_list_afl = run_afl_cov(es.AFL_OBJ, es.AFL_RESULTS_FOLDER, es.GCOV_OBJ, es.GCOV_DIR)
+    func_list_afl = run_afl_cov(es.AFL_OBJ, es.AFL_BINARY_ARGS, es.AFL_RESULTS_FOLDER, es.GCOV_OBJ, es.GCOV_DIR)
     #print("AFL LIST: ")
     print("%d functions covered by AFL."%len(func_list_afl))
     #print(func_list_afl)

@@ -65,7 +65,7 @@ Returns the list with all functions that are internal and called of a bitcode fi
 
 def get_all_called_funcs(bcfilename):
     total_funcs = []
-    popenargs = [MYOPT, "-load", MYLIBMACKEOPT, bcfilename,
+    popenargs = [es.LLVM_OPT, "-load", es.LIB_MACKEOPT, bcfilename,
     "--extractcallgraph", "-disable-output"]
     output = subprocess.check_output(popenargs)
     outjson = json.loads(output.decode("utf-8"))
