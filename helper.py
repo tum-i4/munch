@@ -12,12 +12,12 @@ MYKLEE = expanduser(os.environ['HOME'] + "/build/klee/Release+Asserts/bin/klee")
 """
 Reads the local config file for the analyzed program
 """
-def read_config(config_file):
+def read_config(config_file, klee_time, afl_time, output):
     json_file = open(config_file, "r")
     conf = json.load(json_file)
 
     #global READ_FROM_FILE, AFL_BINARY, LLVM_OBJ, GCOV_DIR, LLVM_OPT, LIB_MACKEOPT, AFL_BINARY_ARGS, AFL_RESULTS_FOLDER
-    global AFL_OBJ, WHICH_KLEE, LLVM_OBJ, TESTCASES, FUZZ_TIME, GCOV_DIR, LLVM_OPT, LIB_MACKEOPT, AFL_BINARY_ARGS, READ_FROM_FILE, OUTPUT_DIR, AFL_RESULTS_FOLDER, KLEE_RESULTS_FOLDER, FUZZ_TIME
+    global AFL_OBJ, WHICH_KLEE, LLVM_OBJ, TESTCASES, FUZZ_TIME, GCOV_DIR, LLVM_OPT, LIB_MACKEOPT, AFL_BINARY_ARGS, READ_FROM_FILE, OUTPUT_DIR, AFL_RESULTS_FOLDER, KLEE_RESULTS_FOLDER, FUZZ_TIME, KLEE_TIME
     es.AFL_OBJ = conf["AFL_OBJ"]
     es.LLVM_OBJ = conf["LLVM_OBJ"]
     es.GCOV_OBJ = conf["GCOV_OBJ"]
@@ -27,12 +27,15 @@ def read_config(config_file):
     es.AFL_BINARY_ARGS = conf["AFL_BINARY_ARGS"]
     es.READ_FROM_FILE = conf["READ_FROM_FILE"]
     
-    es.OUTPUT_DIR = conf["OUTPUT_DIR"]
-    es.AFL_RESULTS_FOLDER = os.path.join(conf["OUTPUT_DIR"], "afl_out")
-    es.KLEE_RESULTS_FOLDER = os.path.join(conf["OUTPUT_DIR"], "klee_out")
+    #es.OUTPUT_DIR = conf["OUTPUT_DIR"]
+    es.OUTPUT_DIR = output
+    es.AFL_RESULTS_FOLDER = os.path.join(es.OUTPUT_DIR, "afl_out")
+    es.KLEE_RESULTS_FOLDER = os.path.join(es.OUTPUT_DIR, "klee_out")
 
     es.TESTCASES = conf["TESTCASES"]
-    es.FUZZ_TIME = conf["FUZZ_TIME"]
+    #es.FUZZ_TIME = conf["FUZZ_TIME"]
+    es.FUZZ_TIME = afl_time
+    es.KLEE_TIME = klee_time
     
     es.WHICH_KLEE = conf["WHICH_KLEE"]
 

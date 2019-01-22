@@ -14,7 +14,7 @@ TARGET_INFO = ""
 SYM_STDIN = ""
 SYM_ARGS = ""
 SYM_FILES = ""
-KLEE_TIME = ""
+#KLEE_TIME = ""
 
 global AFL_OBJ, WHICH_KLEE, LLVM_OBJ, TESTCASES, FUZZ_TIME, GCOV_DIR, LLVM_OPT, LIB_MACKEOPT, AFL_BINARY_ARGS, READ_FROM_FILE, OUTPUT_DIR, AFL_RESULTS_FOLDER, KLEE_RESULTS_FOLDER, FUZZ_TIME
 
@@ -35,7 +35,7 @@ def read_config_repeat(config_file):
     json_file = open(config_file, "r")
     conf = json.load(json_file)
 
-    global AFL_OBJECT, LLVM_OBJECT, WHICH_KLEE, AFL_FOLDER_NAME, SEARCH_NAME, TARGET_INFO, SYM_STDIN, SYM_ARGS, SYM_FILES, KLEE_TIME
+    global AFL_OBJECT, LLVM_OBJECT, WHICH_KLEE, AFL_FOLDER_NAME, SEARCH_NAME, TARGET_INFO, SYM_STDIN, SYM_ARGS, SYM_FILES#, KLEE_TIME
     #AFL_OBJECT = conf['AFL_OBJECT']
     #LLVM_OBJECT = conf["LLVM_OBJECT"]
     #WHICH_KLEE = conf["WHICH_KLEE"]
@@ -45,7 +45,7 @@ def read_config_repeat(config_file):
     SYM_STDIN = conf["SYM_STDIN"]
     SYM_ARGS = conf["SYM_ARGS"]
     SYM_FILES = conf["SYM_FILES"]
-    KLEE_TIME = conf["KLEE_TIME"]
+    #KLEE_TIME = conf["KLEE_TIME"]
 
     #print_config()
 
@@ -76,13 +76,13 @@ def run_klee_cov(prog, klee_out_res):
 
     return covered
 
-def main(config_file):
-    read_config(config_file)
+def main(config_file, klee_time, afl_time, output):
+    read_config(config_file, klee_time, afl_time, output)
     read_config_repeat(config_file)
 
     # get a list of functions topologically ordered
     all_funcs_topologic = helper.get_all_called_funcs(es.LLVM_OBJ)
-    #print("Found %d functions in the program..."%len(all_funcs_topologic))
+    print("Found %d functions in the program..."%len(all_funcs_topologic))
     #print("All functions:", all_funcs_topologic)
 
     afl_out_dir = es.AFL_RESULTS_FOLDER 
@@ -120,11 +120,21 @@ def main(config_file):
 
     targ = TARGET_INFO
 
-    FUNC_TIME = str(int(KLEE_TIME)/len(func_dir.keys()))
+    if len(func_dir.keys())==0:
+        FUNC_TIME = 0
+    else:
+        FUNC_TIME = str(int(es.KLEE_TIME)/len(func_dir.keys()))
+    
+    if float(FUNC_TIME)<2:
+        FUNC_TIME="2"
+
     print("KLEE will be run for %s seconds for each function"%(FUNC_TIME))
 
+    start_time = time.time()
     # run selected version of KLEE
     for key in func_dir:
+        if time.time()-start_time>int(es.KLEE_TIME):
+            break
         if func_dir[key] != 1:
             print(key)
             args = [es.WHICH_KLEE, "--posix-runtime", "--libc=uclibc",

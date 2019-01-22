@@ -9,7 +9,15 @@ global AFL_OBJ, WHICH_KLEE, LLVM_OBJ, TESTCASES, FUZZ_TIME, GCOV_DIR, LLVM_OPT, 
 
 def run_afl_cov(prog, prog_args, path_to_afl_results, gcov_obj, code_dir):
     afl_out_res = path_to_afl_results
-    output = afl_out_res + "/" + "afl_cov.txt"
+    write_func = afl_out_res + "/covered_functions.txt"
+    
+    func_list = []
+
+    if os.path.isfile(write_func):
+        func_file = open(write_func)
+        for line in func_file:
+            func_list.append(line.strip())
+        return func_list
     command = '"' + gcov_obj + ' ' + prog_args + ' ' + es.READ_FROM_FILE + ' AFL_FILE"'
     #print(command)
     #pos = code_dir.rfind('/')
@@ -17,7 +25,7 @@ def run_afl_cov(prog, prog_args, path_to_afl_results, gcov_obj, code_dir):
     args = ['afl-cov', '-d', afl_out_res, '-e', command, '-c', code_dir, '--coverage-include-lines', '-O']
     #print(args)
     #subprocess.call(args)
-    os.system(" ".join(args)+" >/dev/null 2>&1")
+    os.system(" ".join(args))#+" >/dev/null 2>&1")
 
     # get function coverage
     cov_dir = afl_out_res + "/cov/"
@@ -25,10 +33,8 @@ def run_afl_cov(prog, prog_args, path_to_afl_results, gcov_obj, code_dir):
     f_cov = open(filename, "r")
     next(f_cov)
 
-    write_func = afl_out_res + "/covered_functions.txt"
     f = open(write_func, "w+")
 
-    func_list = []
     for line in f_cov:
         words = line.split(" ")
         if "function" in words[3]:
@@ -60,8 +66,8 @@ def order_funcs_topologic(list_of_functions):
     return l
 
 
-def main(config_file):
-    read_config(config_file)
+def main(config_file, klee_time, afl_time, output):
+    read_config(config_file, klee_time, afl_time, output)
 
     testcase = es.TESTCASES
 
@@ -104,6 +110,7 @@ def main(config_file):
         proc = subprocess.Popen(args)
 
         time.sleep(int(fuzz_time))
+        print("Killing AFL")
         os.kill(proc.pid, signal.SIGINT)
     else:
         print("That directory already contains past fuzzing results.")
