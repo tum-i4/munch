@@ -69,18 +69,21 @@ def read_coverage(kleecovered_f, aflcovered_f):
 def main():
     try:
         config_file = sys.argv[1]
-        outputtxt = sys.argv[2]
+        outdir = sys.argv[2]
+        outputtxt = sys.argv[3]
     except IndexError:
         print("Wrong number of command line ", sys.exc_info()[0])
         raise
     
-    helper.read_config(config_file)
+    helper.read_config(config_file, None, None, outdir)
     
     bitcode = es.LLVM_OBJ
     llvmopt = es.LLVM_OPT
     libmackeopt = es.LIB_MACKEOPT
-    kleecovered = path.dirname(es.LLVM_OBJ)+"/covered_funcs.txt"
-    aflcovered = path.dirname(es.AFL_BINARY)+"/"+es.AFL_RESULTS_FOLDER+"/covered_functions.txt"
+    aflcovered = path.join(outdir, "afl_out/covered_functions.txt")
+    kleecovered = path.join(outdir, "klee_out/covered_funcs.txt")
+    #kleecovered = path.dirname(es.LLVM_OBJ)+"/covered_funcs.txt"
+    #aflcovered = path.dirname(es.AFL_BINARY)+"/"+es.AFL_RESULTS_FOLDER+"/covered_functions.txt"
 
     if not bitcode.endswith(".bc"):
         print("ERROR: KLEE compiled file should have a .bc extension")

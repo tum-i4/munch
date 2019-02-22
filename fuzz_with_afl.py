@@ -7,7 +7,7 @@ from helper import read_config
 
 global AFL_OBJ, WHICH_KLEE, LLVM_OBJ, TESTCASES, FUZZ_TIME, GCOV_DIR, LLVM_OPT, LIB_MACKEOPT, AFL_BINARY_ARGS, READ_FROM_FILE, OUTPUT_DIR, AFL_RESULTS_FOLDER, KLEE_RESULTS_FOLDER, FUZZ_TIME
 
-def run_afl_cov(prog, prog_args, path_to_afl_results, gcov_obj, code_dir):
+def run_afl_cov(prog, prog_args, read_from_file, path_to_afl_results, gcov_obj, code_dir):
     afl_out_res = path_to_afl_results
     write_func = afl_out_res + "/covered_functions.txt"
     
@@ -18,8 +18,15 @@ def run_afl_cov(prog, prog_args, path_to_afl_results, gcov_obj, code_dir):
         for line in func_file:
             func_list.append(line.strip())
         return func_list
-    command = '"' + gcov_obj + ' ' + prog_args + ' ' + es.READ_FROM_FILE + ' AFL_FILE"'
-    #print(command)
+    
+    if "@@" in read_from_file:
+        #file_redirect, extra_args = read_from_file.split()[0].replace("@@", "<<"), " ".join(read_from_file.split()[1:])
+        file_redirect, extra_args = "", " ".join(read_from_file.split()[1:])
+    else:
+        file_redirect, extra_args = "<<", ""
+    
+    command = '"' + gcov_obj + ' ' + prog_args + ' ' + file_redirect + ' AFL_FILE ' + extra_args + '"'
+    print(command)
     #pos = code_dir.rfind('/')
     #code_dir = code_dir[:pos + 1]
     args = ['afl-cov', '-d', afl_out_res, '-e', command, '-c', code_dir, '--coverage-include-lines', '-O']
@@ -72,7 +79,7 @@ def main(config_file, klee_time, afl_time, output):
     testcase = es.TESTCASES
 
     if not os.path.isdir(testcase):
-        print("Testcases directory does not exist: %d"%(testcases))
+        print("Testcases directory does not exist: %s"%(testcase))
         print("Exiting...")
         return -1
 
@@ -100,7 +107,7 @@ def main(config_file, klee_time, afl_time, output):
     # run afl-fuzz
     #pos = es.AFL_BINARY.rfind('/')
     if not os.path.isdir(es.AFL_RESULTS_FOLDER):
-        args = ["afl-fuzz", "-i", testcase, "-o", es.AFL_RESULTS_FOLDER, es.AFL_OBJ, es.AFL_BINARY_ARGS]
+        args = ["afl-fuzz", "-i", testcase, "-o", es.AFL_RESULTS_FOLDER, es.AFL_OBJ, es.AFL_BINARY_ARGS, es.READ_FROM_FILE]
         # take the progs args as given from command line
         # if sys.argv[5:]:
         #    args = args + sys.argv[5:]
@@ -121,7 +128,7 @@ def main(config_file, klee_time, afl_time, output):
     # be sure it's topologically sorted
     print("Computing function coverage after fuzzing...")
     time.sleep(2)
-    func_list_afl = run_afl_cov(es.AFL_OBJ, es.AFL_BINARY_ARGS, es.AFL_RESULTS_FOLDER, es.GCOV_OBJ, es.GCOV_DIR)
+    func_list_afl = run_afl_cov(es.AFL_OBJ, es.AFL_BINARY_ARGS, es.READ_FROM_FILE, es.AFL_RESULTS_FOLDER, es.GCOV_OBJ, es.GCOV_DIR)
     #print("AFL LIST: ")
     print("%d functions covered by AFL."%len(func_list_afl))
     #print(func_list_afl)

@@ -67,6 +67,8 @@ def run_afl_cov(prog, afl_out_res):
 def run_klee_cov(prog, klee_out_res):
     covered = []
 
+    if not os.path.isfile(klee_out_res):
+        return covered
     istats = open(klee_out_res, "r")
     for line in istats:
         line = line.strip()
